@@ -72,19 +72,26 @@
   <div class="container">
     <h1>Custom UTM URL Builder</h1>
 
-    <!-- Input for selecting lead source -->
+    <!-- Input for selecting Agency Name -->
     <div class="input-group">
-      <label for="source">Select Lead Source:</label>
-      <select id="source">
-        <option value="CRM">CRM</option>
-        <option value="Ads">Ads</option>
-        <option value="Shop">Shop</option>
+      <label for="agency">Select Agency Name:</label>
+      <select id="agency" onchange="updateSourceOptions()">
+        <option value="avito">Avito</option>
+        <option value="smm">SMM</option>
       </select>
     </div>
 
-    <!-- Input for campaign name -->
+    <!-- Input for selecting Source -->
     <div class="input-group">
-      <label for="campaign">Enter Campaign Name:</label>
+      <label for="source">Select Lead Source:</label>
+      <select id="source">
+        <!-- Options will be updated based on Agency selection -->
+      </select>
+    </div>
+
+    <!-- Input for Campaign Name (Optional) -->
+    <div class="input-group">
+      <label for="campaign">Enter Campaign Name (Optional):</label>
       <input type="text" id="campaign" placeholder="Enter campaign name">
     </div>
 
@@ -99,26 +106,66 @@
   </div>
 
   <script>
+    // Function to update the source options based on the selected agency
+    function updateSourceOptions() {
+      var agency = document.getElementById("agency").value;
+      var sourceDropdown = document.getElementById("source");
+      var options = [];
+
+      if (agency === "avito") {
+        options = ["CRM", "Ads", "Shop"];
+      } else if (agency === "smm") {
+        options = ["SMMHIGH", "SMMbio"];
+      }
+
+      // Clear existing options
+      sourceDropdown.innerHTML = "";
+
+      // Add new options
+      options.forEach(function(source) {
+        var option = document.createElement("option");
+        option.value = source;
+        option.textContent = source;
+        sourceDropdown.appendChild(option);
+      });
+    }
+
+    // Function to generate UTM URL
     function generateUTMUrl() {
       // Get user inputs
+      var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
       var campaign = document.getElementById("campaign").value.trim();
 
-      // Validate that the campaign name is provided
-      if (!campaign) {
-        alert("Please enter a campaign name.");
+      // Define agence value based on agency selected
+      var agence = "";
+      if (agency === "avito") {
+        agence = "cpl_agency4";
+      } else if (agency === "smm") {
+        agence = "SMM";
+      }
+
+      // Validate that source is selected
+      if (!source) {
+        alert("Please select a lead source.");
         return;
       }
 
       // Base URL for the UTM parameters
       var baseUrl = "https://iqostest.com/?";
 
-      // Generate UTM URL based on user input
-      var utmUrl = baseUrl + "agence=cpl_agency4&source=" + encodeURIComponent(source) + "&campaign=" + encodeURIComponent(campaign);
+      // Generate UTM URL with optional campaign
+      var utmUrl = baseUrl + "agence=" + encodeURIComponent(agence) + "&source=" + encodeURIComponent(source);
+      if (campaign) {
+        utmUrl += "&campaign=" + encodeURIComponent(campaign);
+      }
 
       // Display the UTM URL in the output field
       document.getElementById("utm-url").value = utmUrl;
     }
+
+    // Initialize the page with the correct source options for the default agency
+    updateSourceOptions();
   </script>
 
 </body>
