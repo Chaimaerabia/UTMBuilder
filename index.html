@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom UTM URL Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 16px;
+      margin-bottom: 8px;
+      display: block;
+      color: #333;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .output-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .output-container input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Custom UTM URL Builder</h1>
+
+    <!-- Input for selecting lead source -->
+    <div class="input-group">
+      <label for="source">Select Lead Source:</label>
+      <select id="source">
+        <option value="CRM">CRM</option>
+        <option value="Ads">Ads</option>
+        <option value="Shop">Shop</option>
+      </select>
+    </div>
+
+    <!-- Input for campaign name -->
+    <div class="input-group">
+      <label for="campaign">Enter Campaign Name:</label>
+      <input type="text" id="campaign" placeholder="Enter campaign name">
+    </div>
+
+    <!-- Button to generate UTM URL -->
+    <button onclick="generateUTMUrl()">Generate UTM URL</button>
+
+    <!-- Output container for generated UTM URL -->
+    <div class="output-container">
+      <h3>Generated UTM URL:</h3>
+      <input type="text" id="utm-url" readonly placeholder="Your UTM URL will appear here">
+    </div>
+  </div>
+
+  <script>
+    function generateUTMUrl() {
+      // Get user inputs
+      var source = document.getElementById("source").value;
+      var campaign = document.getElementById("campaign").value.trim();
+
+      // Validate that the campaign name is provided
+      if (!campaign) {
+        alert("Please enter a campaign name.");
+        return;
+      }
+
+      // Base URL for the UTM parameters
+      var baseUrl = "https://iqostest.com/?";
+
+      // Generate UTM URL based on user input
+      var utmUrl = baseUrl + "agence=cpl_agency4&source=" + encodeURIComponent(source) + "&campaign=" + encodeURIComponent(campaign);
+
+      // Display the UTM URL in the output field
+      document.getElementById("utm-url").value = utmUrl;
+    }
+  </script>
+
+</body>
+</html>
