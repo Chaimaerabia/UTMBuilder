@@ -152,7 +152,8 @@
         case "MGM":
         case "OMAR":
           // No utm_source or utm_campaign for CSC, MGM, OMAR
-          utm_source = source; // Just use the source as is
+          utm_source = ""; // Don't include utm_source
+          utm_campaign = ""; // Don't include utm_campaign
           break;
         case "SMM":
         case "SMMBIO":
