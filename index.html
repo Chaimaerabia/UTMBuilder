@@ -101,12 +101,6 @@
       </select>
     </div>
 
-    <!-- Input for Campaign Name (Optional) -->
-    <div class="input-group">
-      <label for="campaign">Enter Campaign Name (Optional):</label>
-      <input type="text" id="campaign" placeholder="Enter campaign name">
-    </div>
-
     <!-- Button to generate UTM URL -->
     <button onclick="generateUTMUrl()">Generate UTM URL</button>
 
@@ -157,10 +151,12 @@
       // Get user inputs
       var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
-      var campaign = document.getElementById("campaign").value.trim();
 
       // Define agency value based on agency selected
       var agence = "";
+      var utm_source = "";
+      var utm_campaign = "";
+
       if (agency === "avito") {
         agence = "cpl_agency4";
       } else if (agency === "smm") {
@@ -175,59 +171,51 @@
         return;
       }
 
-      // Base URL for the UTM parameters
-      var baseUrl = "https://iqostest.com/?";
-      var utm_source = "";
-      var utm_campaign = "";
-
-      // Define utm_source and utm_campaign based on source selection
-      if (agency === "pmima") {
-        switch (source) {
-          case "CSC":
-            utm_source = "CRM";
-            break;
-          case "CRM":
-            utm_source = "crm";
-            break;
-          case "CRM-AOKI-TEASER":
-            utm_source = "crm";
-            utm_campaign = "aoki";
-            break;
-          case "SMM":
-          case "SMMBIO":
-          case "SMMHIGH":
-            utm_source = "social";
-            break;
-          case "SMM-AOKI-TEASER":
-            utm_source = "social";
-            utm_campaign = "aoki";
-            break;
-          case "WEB":
-            utm_source = "web";
-            break;
-          case "WEB-AOKI":
-            utm_source = "web";
-            utm_campaign = "aoki";
-            break;
-          case "WEB-AOKI-TEASER":
-            utm_source = "web";
-            utm_campaign = "aoki";
-            break;
-          case "OMAR":
-            utm_source = "DCE2"; // Special case for OMAR
-            break;
-          default:
-            utm_source = source;
-        }
+      // Define source and campaign based on the source selection
+      switch (source) {
+        case "CSC":
+          utm_source = "CRM";
+          break;
+        case "CRM":
+          utm_source = "crm";
+          break;
+        case "CRM-AOKI-TEASER":
+          utm_source = "crm";
+          utm_campaign = "aoki";
+          break;
+        case "SMM":
+        case "SMMBIO":
+        case "SMMHIGH":
+          utm_source = "social";
+          break;
+        case "SMM-AOKI-TEASER":
+          utm_source = "social";
+          utm_campaign = "aoki";
+          break;
+        case "WEB":
+          utm_source = "web";
+          break;
+        case "WEB-AOKI":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "WEB-AOKI-TEASER":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "OMAR":
+          utm_source = "DCE2"; // Special case for OMAR
+          break;
+        default:
+          utm_source = source; // Fallback if no special case
       }
 
-      // Generate UTM URL with optional campaign
-      var utmUrl = baseUrl + "agence=" + encodeURIComponent(agence) + "&source=" + encodeURIComponent(utm_source);
+      // Generate UTM URL with source, agence, and campaign
+      var utmUrl = "https://iqostest.com/source=" + encodeURIComponent(source) +
+                   "&agence=" + encodeURIComponent(agence) +
+                   "&utm_source=" + encodeURIComponent(utm_source);
       if (utm_campaign) {
-        utmUrl += "&campaign=" + encodeURIComponent(utm_campaign);
-      }
-      if (campaign) {
-        utmUrl += "&campaign=" + encodeURIComponent(campaign); // Allow custom campaign input
+        utmUrl += "&utm_campaign=" + encodeURIComponent(utm_campaign);
       }
 
       // Display the UTM URL in the output field
