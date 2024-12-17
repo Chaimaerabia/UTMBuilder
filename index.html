@@ -38,6 +38,11 @@
       font-size: 16px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    select:focus, input:focus {
+      border-color: #007bff;
+      outline: none;
     }
     button {
       width: 100%;
@@ -65,6 +70,12 @@
       border: 1px solid #ccc;
       background-color: #f9f9f9;
     }
+    .error-message {
+      color: red;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -78,6 +89,7 @@
       <select id="agency" onchange="updateSourceOptions()">
         <option value="avito">Avito</option>
         <option value="smm">SMM</option>
+        <option value="pmima">PMIMA</option>
       </select>
     </div>
 
@@ -102,6 +114,7 @@
     <div class="output-container">
       <h3>Generated UTM URL:</h3>
       <input type="text" id="utm-url" readonly placeholder="Your UTM URL will appear here">
+      <div id="error-message" class="error-message"></div>
     </div>
   </div>
 
@@ -116,6 +129,12 @@
         options = ["CRM", "Ads", "Shop"];
       } else if (agency === "smm") {
         options = ["SMMHIGH", "SMMbio"];
+      } else if (agency === "pmima") {
+        options = [
+          "CSC", "CRM", "CRM-AOKI-TEASER", "BRIDGING", "MGM", "SMM", 
+          "SMMBIO", "SMMHIGH", "SMM-AOKI-TEASER", "WEB", "WEB-AOKI", 
+          "WEB-AOKI-TEASER", "OMAR"
+        ];
       }
 
       // Clear existing options
@@ -132,32 +151,83 @@
 
     // Function to generate UTM URL
     function generateUTMUrl() {
+      // Clear previous error message
+      document.getElementById("error-message").textContent = "";
+
       // Get user inputs
       var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
       var campaign = document.getElementById("campaign").value.trim();
 
-      // Define agence value based on agency selected
+      // Define agency value based on agency selected
       var agence = "";
       if (agency === "avito") {
         agence = "cpl_agency4";
       } else if (agency === "smm") {
         agence = "SMM";
+      } else if (agency === "pmima") {
+        agence = "PMIMA";
       }
 
       // Validate that source is selected
       if (!source) {
-        alert("Please select a lead source.");
+        document.getElementById("error-message").textContent = "Please select a lead source.";
         return;
       }
 
       // Base URL for the UTM parameters
       var baseUrl = "https://iqostest.com/?";
+      var utm_source = "";
+      var utm_campaign = "";
+
+      // Define utm_source and utm_campaign based on source selection
+      if (agency === "pmima") {
+        switch (source) {
+          case "CSC":
+            utm_source = "CRM";
+            break;
+          case "CRM":
+            utm_source = "crm";
+            break;
+          case "CRM-AOKI-TEASER":
+            utm_source = "crm";
+            utm_campaign = "aoki";
+            break;
+          case "SMM":
+          case "SMMBIO":
+          case "SMMHIGH":
+            utm_source = "social";
+            break;
+          case "SMM-AOKI-TEASER":
+            utm_source = "social";
+            utm_campaign = "aoki";
+            break;
+          case "WEB":
+            utm_source = "web";
+            break;
+          case "WEB-AOKI":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "WEB-AOKI-TEASER":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "OMAR":
+            utm_source = "DCE2"; // Special case for OMAR
+            break;
+          default:
+            utm_source = source;
+        }
+      }
 
       // Generate UTM URL with optional campaign
-      var utmUrl = baseUrl + "agence=" + encodeURIComponent(agence) + "&source=" + encodeURIComponent(source);
+      var utmUrl = baseUrl + "agence=" + encodeURIComponent(agence) + "&source=" + encodeURIComponent(utm_source);
+      if (utm_campaign) {
+        utmUrl += "&campaign=" + encodeURIComponent(utm_campaign);
+      }
       if (campaign) {
-        utmUrl += "&campaign=" + encodeURIComponent(campaign);
+        utmUrl += "&campaign=" + encodeURIComponent(campaign); // Allow custom campaign input
       }
 
       // Display the UTM URL in the output field
