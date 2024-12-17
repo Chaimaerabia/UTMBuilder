@@ -150,11 +150,9 @@
       switch (source) {
         case "CSC":
         case "MGM":
-          // No utm_source or utm_campaign for CSC and MGM
-          utm_source = source;
-          break;
         case "OMAR":
-          utm_source = "DCE2";  // Special case for OMAR
+          // No utm_source or utm_campaign for CSC, MGM, OMAR
+          utm_source = source; // Just use the source as is
           break;
         case "SMM":
         case "SMMBIO":
