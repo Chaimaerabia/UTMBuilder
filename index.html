@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom URL Builder</title>
+  <title>Custom UTM URL Builder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -81,14 +81,12 @@
 <body>
 
   <div class="container">
-    <h1>Custom URL Builder</h1>
+    <h1>Custom UTM URL Builder</h1>
 
-    <!-- Input for selecting Agency Name -->
+    <!-- Input for selecting Agency Name (only PMIMA) -->
     <div class="input-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency" onchange="updateSourceOptions()">
-        <option value="avito">Avito</option>
-        <option value="smm">SMM</option>
+      <select id="agency" disabled>
         <option value="pmima">PMIMA</option>
       </select>
     </div>
@@ -97,80 +95,110 @@
     <div class="input-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
-        <!-- Options will be updated based on Agency selection -->
+        <option value="CSC">CSC</option>
+        <option value="MGM">MGM</option>
+        <option value="OMAR">OMAR</option>
+        <option value="SMM">SMM</option>
+        <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
+        <option value="SMMBIO">SMMBIO</option>
+        <option value="SMMHIGH">SMMHIGH</option>
+        <option value="WEB">WEB</option>
+        <option value="WEB-AOKI">WEB-AOKI</option>
+        <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
+        <option value="BRIDGING">BRIDGING</option>
+        <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>
       </select>
     </div>
 
-    <!-- Button to generate URL -->
-    <button onclick="generateUrl()">Generate URL</button>
+    <!-- Button to generate UTM URL -->
+    <button onclick="generateUTMUrl()">Generate UTM URL</button>
 
-    <!-- Output container for generated URL -->
+    <!-- Output container for generated UTM URL -->
     <div class="output-container">
-      <h3>Generated URL:</h3>
-      <input type="text" id="generated-url" readonly placeholder="Your URL will appear here">
+      <h3>Generated UTM URL:</h3>
+      <input type="text" id="utm-url" readonly placeholder="Your UTM URL will appear here">
       <div id="error-message" class="error-message"></div>
     </div>
   </div>
 
   <script>
-    // Function to update the source options based on the selected agency
-    function updateSourceOptions() {
-      var agency = document.getElementById("agency").value;
-      var sourceDropdown = document.getElementById("source");
-      var options = [];
-
-      if (agency === "avito") {
-        options = ["CRM", "Ads", "Shop"];
-      } else if (agency === "smm") {
-        options = ["SMMHIGH", "SMMbio"];
-      } else if (agency === "pmima") {
-        options = [
-          "CSC", "CRM", "CRM-AOKI-TEASER", "BRIDGING", "MGM", "SMM", 
-          "SMMBIO", "SMMHIGH", "SMM-AOKI-TEASER", "WEB", "WEB-AOKI", 
-          "WEB-AOKI-TEASER", "OMAR"
-        ];
-      }
-
-      // Clear existing options
-      sourceDropdown.innerHTML = "";
-
-      // Add new options
-      options.forEach(function(source) {
-        var option = document.createElement("option");
-        option.value = source;
-        option.textContent = source;
-        sourceDropdown.appendChild(option);
-      });
-    }
-
-    // Function to generate URL
-    function generateUrl() {
+    // Function to generate UTM URL
+    function generateUTMUrl() {
       // Clear previous error message
       document.getElementById("error-message").textContent = "";
 
       // Get user inputs
-      var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
 
-      // Base URL
-      var baseUrl = "https://iqostest.com/";
+      // Define the agency
+      var agence = "PMIMA";
 
-      // Initialize the URL parameters
-      var url = baseUrl + "?agence=" + agency + "&source=" + source;
+      // Validate that source is selected
+      if (!source) {
+        document.getElementById("error-message").textContent = "Please select a lead source.";
+        return;
+      }
 
-      // Handle CRM-AOKI-TEASER with a campaign
-      if (source === "CRM-AOKI-TEASER") {
-        url += "&utm_source=CRM&utm_campaign=aoki";
-      } else if (source === "OMAR") {
-        // Handle OMAR with DCE2 as the source
-        url = "https://iqostest.com/?agence=PMIMA&source=DCE2";
-      } else if (source === "CRM" || source === "MGM" || source === "SMM") {
-        // Add utm_source only for CRM, MGM, and SMM types
-        url += "&utm_source=" + source;
+      // Base URL for the UTM parameters
+      var baseUrl = "https://iqostest.com/?";
+
+      // Initialize URL components
+      var utm_source = "";
+      var utm_campaign = "";
+
+      // Define source and campaign based on the source selection
+      switch (source) {
+        case "CSC":
+        case "MGM":
+          // No utm_source or utm_campaign for CSC and MGM
+          utm_source = source;
+          break;
+        case "OMAR":
+          utm_source = "DCE2";  // Special case for OMAR
+          break;
+        case "SMM":
+        case "SMMBIO":
+        case "SMMHIGH":
+          utm_source = "social";
+          break;
+        case "SMM-AOKI-TEASER":
+          utm_source = "social";
+          utm_campaign = "aoki";
+          break;
+        case "WEB":
+          utm_source = "web";
+          break;
+        case "WEB-AOKI":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "WEB-AOKI-TEASER":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "BRIDGING":
+          utm_source = "scanpack.com";
+          utm_campaign = "bridging";
+          break;
+        case "CRM-AOKI-TEASER":
+          utm_source = "crm";
+          utm_campaign = "aoki";
+          break;
+      }
+
+      // Build the final URL
+      var url = baseUrl + "agence=" + agence + "&source=" + source;
+
+      if (utm_source) {
+        url += "&utm_source=" + utm_source;
+      }
+
+      if (utm_campaign) {
+        url += "&utm_campaign=" + utm_campaign;
       }
 
       // Display the generated URL
-      document.getElementById("generated-url").value = url;
+      document.getElementById("utm-url").value = url;
     }
   </script>
 
