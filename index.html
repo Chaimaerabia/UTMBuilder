@@ -131,26 +131,24 @@
       // If agency is "SCHEDULE", limit the options to "CSC" and "DCE2"
       if (agency === "schedule") {
         // Remove all options except CSC and DCE2
-        sourceSelect.innerHTML = `
-          <option value="CSC">CSC</option>
-          <option value="DCE2">DCE2</option>
-        `;
+        sourceSelect.innerHTML = 
+          `<option value="CSC">CSC</option>
+           <option value="DCE2">DCE2</option>`;
       } else {
         // Restore the full source list when "PMIMA" is selected
-        sourceSelect.innerHTML = `
-          <option value="CSC">CSC</option>
-          <option value="MGM">MGM</option>
-          <option value="DCE2">DCE2</option>
-          <option value="SMM">SMM</option>
-          <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
-          <option value="SMMBIO">SMMBIO</option>
-          <option value="SMMHIGH">SMMHIGH</option>
-          <option value="WEB">WEB</option>
-          <option value="WEB-AOKI">WEB-AOKI</option>
-          <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
-          <option value="BRIDGING">BRIDGING</option>
-          <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>
-        `;
+        sourceSelect.innerHTML = 
+          `<option value="CSC">CSC</option>
+           <option value="MGM">MGM</option>
+           <option value="DCE2">DCE2</option>
+           <option value="SMM">SMM</option>
+           <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
+           <option value="SMMBIO">SMMBIO</option>
+           <option value="SMMHIGH">SMMHIGH</option>
+           <option value="WEB">WEB</option>
+           <option value="WEB-AOKI">WEB-AOKI</option>
+           <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
+           <option value="BRIDGING">BRIDGING</option>
+           <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>`;
       }
     }
 
@@ -161,7 +159,7 @@
 
       // Get user inputs
       var source = document.getElementById("source").value;
-      var agency = "PMIMA"; // Hardcode agency to "PMIMA" regardless of the selection
+      var agency = document.getElementById("agency").value; // Get selected agency
 
       // Validate that source is selected
       if (!source) {
@@ -169,8 +167,8 @@
         return;
       }
 
-      // Base URL for the UTM parameters
-      var baseUrl = "https://iqostest.com/schedule?"; // Include "/schedule" in the URL path
+      // Base URL for the selected agency
+      var baseUrl = agency === "schedule" ? "https://iqostest.com/schedule?" : "https://iqostest.com/";
 
       // Initialize URL components
       var utm_source = "";
