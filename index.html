@@ -87,7 +87,7 @@
     <div class="input-group">
       <label for="agency">Select Agency Name:</label>
       <select id="agency" onchange="updateSourceOptions()">
-        <option value="pmima">PMIMA</option>
+        <option value="PMIMA">PMIMA</option>
         <option value="schedule">SCHEDULE</option>
       </select>
     </div>
@@ -161,7 +161,7 @@
 
       // Get user inputs
       var source = document.getElementById("source").value;
-      var agency = "pmima"; // Hardcode agency to "PMIMA" regardless of the selection
+      var agency = "PMIMA"; // Hardcode agency to "PMIMA" regardless of the selection
 
       // Validate that source is selected
       if (!source) {
