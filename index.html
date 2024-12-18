@@ -97,7 +97,7 @@
       <select id="source">
         <option value="CSC">CSC</option>
         <option value="MGM">MGM</option>
-        <option value="DCE2">OMAR</option>
+        <option value="DCE2">DCE2</option>
         <option value="SMM">SMM</option>
         <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
         <option value="SMMBIO">SMMBIO</option>
@@ -150,7 +150,7 @@
       switch (source) {
         case "CSC":
         case "MGM":
-        case "OMAR":
+        case "DCE2":
           // No utm_source or utm_campaign for CSC, MGM, OMAR
           utm_source = ""; // Don't include utm_source
           utm_campaign = ""; // Don't include utm_campaign
