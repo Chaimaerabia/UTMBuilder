@@ -98,7 +98,7 @@
       <select id="source">
         <option value="CSC">CSC</option>
         <option value="MGM">MGM</option>
-        <option value="DCE2">OMAR</option>
+        <option value="DCE2">DCE2</option>
         <option value="SMM">SMM</option>
         <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
         <option value="SMMBIO">SMMBIO</option>
@@ -133,14 +133,14 @@
         // Remove all options except CSC and DCE2
         sourceSelect.innerHTML = `
           <option value="CSC">CSC</option>
-          <option value="DCE2">OMAR</option>
+          <option value="DCE2">DCE2</option>
         `;
       } else {
         // Restore the full source list when "PMIMA" is selected
         sourceSelect.innerHTML = `
           <option value="CSC">CSC</option>
           <option value="MGM">MGM</option>
-          <option value="DCE2">OMAR</option>
+          <option value="DCE2">DCE2</option>
           <option value="SMM">SMM</option>
           <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
           <option value="SMMBIO">SMMBIO</option>
@@ -180,7 +180,7 @@
       switch (source) {
         case "CSC":
         case "MGM":
-        case "OMAR":
+        case "DCE2":
           utm_source = "";
           utm_campaign = "";
           break;
