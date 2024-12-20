@@ -256,7 +256,7 @@
         return;
       }
 
-      // Base URL
+      // Base URL (change based on purpose)
       var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
 
       // Initialize URL components
@@ -336,7 +336,7 @@
           utmUrl += "&utm_campaign=" + utm_campaign + "-TEST";
         }
       } else {
-        if (utm_source) utmUrl += "&utm_source=" + utm_source;
+        if (utm_source && purpose === "URL") utmUrl += "&utm_source=" + utm_source;
         if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
       }
 
