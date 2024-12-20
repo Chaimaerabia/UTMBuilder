@@ -96,7 +96,7 @@
     <h1>Custom UTM URL Builder</h1>
 
     <!-- Step 1: Choose Purpose of Visit -->
-    <div class="input-group" id="purpose-group">
+    <div class="input-group" id="purpose-group" style="display:block;">
       <label for="purpose">Choose the purpose of your visit:</label>
       <select id="purpose" onchange="updateDropdowns()">
         <option value="">Select Purpose</option>
@@ -108,7 +108,7 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency" onchange="updateSourceOptions()">
+      <select id="agency">
         <option value="PMIMA">PMIMA</option>
       </select>
     </div>
@@ -231,41 +231,4 @@
           utm_source = "web";
           utm_campaign = "aoki";
           break;
-        case "WEB-AOKI-TEASER":
-          utm_source = "web";
-          utm_campaign = "aoki";
-          break;
-        case "BRIDGING":
-          utm_source = "scanpack.com";
-          utm_campaign = "bridging";
-          break;
-        case "CRM-AOKI-TEASER":
-          utm_source = "crm";
-          utm_campaign = "aoki";
-          break;
-      }
-
-      // Add "-TEST" if the TEST checkbox is checked
-      if (testChecked) {
-        source += "-TEST";
-        utm_source += "-TEST";
-      }
-
-      // Build the final URL
-      var url = baseUrl + "agency=" + agency + "&source=" + source;
-
-      if (utm_source) {
-        url += "&utm_source=" + utm_source;
-      }
-
-      if (utm_campaign) {
-        url += "&utm_campaign=" + utm_campaign;
-      }
-
-      // Display the generated URL
-      document.getElementById("utm-url").value = url;
-    }
-  </script>
-
-</body>
-</html>
+        case "WEB-AOKI
