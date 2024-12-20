@@ -105,7 +105,7 @@
       </select>
     </div>
 
-    <!-- Step 2: Agency Name -->
+    <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
       <select id="agency" onchange="updateSourceOptions()">
@@ -113,7 +113,7 @@
       </select>
     </div>
 
-    <!-- Step 3: Source Name -->
+    <!-- Step 3: Source Name (Initially hidden) -->
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
@@ -121,7 +121,7 @@
       </select>
     </div>
 
-    <!-- Step 4: Test Checkbox -->
+    <!-- Step 4: Test Checkbox (Initially hidden) -->
     <div class="checkbox-container" id="test-checkbox-container" style="display: none;">
       <label>
         <input type="checkbox" id="test-checkbox"> TEST (Click here if you are testing the mechanic only, if not, leave it empty)
@@ -253,9 +253,11 @@
 
       // Build the final URL
       var url = baseUrl + "agency=" + agency + "&source=" + source;
+
       if (utm_source) {
         url += "&utm_source=" + utm_source;
       }
+
       if (utm_campaign) {
         url += "&utm_campaign=" + utm_campaign;
       }
