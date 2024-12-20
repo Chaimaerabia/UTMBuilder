@@ -25,7 +25,7 @@
     }
     .input-group {
       margin-bottom: 20px;
-      display: none;
+      display: block;
     }
     label {
       font-size: 16px;
@@ -96,7 +96,7 @@
     <h1>Custom UTM URL Builder</h1>
 
     <!-- Step 1: Choose Purpose of Visit -->
-    <div class="input-group" id="purpose-group" style="display:block;">
+    <div class="input-group" id="purpose-group">
       <label for="purpose">Choose the purpose of your visit:</label>
       <select id="purpose" onchange="updateDropdowns()">
         <option value="">Select Purpose</option>
@@ -108,17 +108,21 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency"></select>
+      <select id="agency" onchange="populateSources()">
+        <option value="">Select Agency</option>
+      </select>
     </div>
 
     <!-- Step 3: Source Name (Initially hidden) -->
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
-      <select id="source"></select>
+      <select id="source">
+        <option value="">Select Lead Source</option>
+      </select>
     </div>
 
     <!-- Step 4: Test Checkbox (Initially hidden) -->
-    <div class="checkbox-container" id="test-checkbox-container" style="display: none;">
+    <div class="checkbox-container" id="test-checkbox-container">
       <label>
         <input type="checkbox" id="test-checkbox"> TEST (Click here if you are testing the mechanic only, if not, leave it empty)
       </label>
@@ -145,7 +149,6 @@
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
         document.getElementById("test-checkbox-container").style.display = "block";
-
         populateAgencies(purpose);
       } else {
         document.getElementById("agency-group").style.display = "none";
@@ -226,6 +229,7 @@
         }
       };
 
+      // Populate source dropdown for URL purpose only
       if (purpose === "URL" && agencySources[agency]) {
         const sources = agencySources[agency];
         for (let leadSource in sources) {
