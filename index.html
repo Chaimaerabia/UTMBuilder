@@ -108,8 +108,12 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency" onchange="updateSourceOptions()">
-        <!-- Options will be dynamically populated -->
+      <select id="agency">
+        <option value="PMIMA">PMIMA</option>
+        <option value="MUNCHY">MUNCHY</option>
+        <option value="GLOVO">GLOVO</option>
+        <option value="cpl_agency2">cpl_agency2</option>
+        <option value="cpl_agency4">cpl_agency4</option>
       </select>
     </div>
 
@@ -117,7 +121,7 @@
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
-        <!-- The options will be dynamically populated based on the purpose selection -->
+        <!-- Options will be dynamically populated based on the purpose selection -->
       </select>
     </div>
 
@@ -149,7 +153,7 @@
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
         document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
-        updateAgencyOptions(purpose); // Update agency options based on the selected purpose
+        updateSourceOptions(purpose); // Update source options based on the selected purpose
       } else {
         document.getElementById("agency-group").style.display = "none";
         document.getElementById("source-group").style.display = "none";
@@ -157,91 +161,34 @@
       }
     }
 
-    // Function to update the agency options based on the selected purpose
-    function updateAgencyOptions(purpose) {
-      var agencySelect = document.getElementById("agency");
-
-      // Clear previous agency options
-      agencySelect.innerHTML = "<option value=''>Select Agency</option>";
-
-      // Define agency options based on purpose
-      var agencies = [];
-      if (purpose === "URL") {
-        agencies = [
-          { agency: "cpl_agency4", leadSources: ["CRM", "ADS_IAB", "SHOP", "SHOP_WSP", "SHOP_CALL"] },
-          { agency: "GLOVO", leadSources: ["COIN", "ORGANIC"] },
-          { agency: "MUNCHY", leadSources: ["COIN"] },
-          { agency: "PMIMA", leadSources: ["CRM", "CRM-AOKI-TEASER", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER"] }
-        ];
-      } else if (purpose === "SCHEDULE") {
-        agencies = [
-          { agency: "cpl_agency2", leadSources: ["GLOVO", "SCHEDULE"] },
-          { agency: "cpl_agency4", leadSources: ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"] },
-          { agency: "PMIMA", leadSources: ["CSC", "MGM", "DCE2"] },
-          { agency: "GLOVO", leadSources: ["ORGANIC"] }
-        ];
-      }
-
-      // Populate agency dropdown
-      agencies.sort((a, b) => a.agency.localeCompare(b.agency));
-      agencies.forEach(function(agency) {
-        var option = document.createElement("option");
-        option.value = agency.agency;
-        option.text = agency.agency;
-        agencySelect.appendChild(option);
-      });
-
-      // Reset source dropdown when the agency changes
-      updateSourceOptions();
-    }
-
-    // Function to update the source options based on the selected agency
-    function updateSourceOptions() {
-      var agency = document.getElementById("agency").value;
-      var purpose = document.getElementById("purpose").value;
+    // Function to update the source options based on the selected purpose
+    function updateSourceOptions(purpose) {
       var sourceSelect = document.getElementById("source");
 
-      // Clear previous source options
-      sourceSelect.innerHTML = "<option value=''>Select Lead Source</option>";
-
-      var sources = [];
-
-      // Define sources for URL purpose
-      if (purpose === "URL") {
-        if (agency === "PMIMA") {
-          sources = ["CRM", "CRM-AOKI-TEASER", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER"];
-        } else if (agency === "MUNCHY") {
-          sources = ["COIN"];
-        } else if (agency === "GLOVO") {
-          sources = ["COIN"];
-        } else if (agency === "cpl_agency4") {
-          sources = ["CRM", "ADS_IAB", "SHOP", "SHOP_WSP", "SHOP_CALL"];
-        }
+      if (purpose === "SCHEDULE") {
+        sourceSelect.innerHTML = 
+          `<option value="CSC">CSC</option>
+           <option value="DCE2">DCE2</option>
+           <option value="MGM">MGM</option>
+           <option value="GLOVO">GLOVO</option>
+           <option value="SHOP_WSP">SHOP_WSP</option>
+           <option value="SHOP_CALL">SHOP_CALL</option>`;
+      } else if (purpose === "URL") {
+        sourceSelect.innerHTML = 
+          `<option value="CRM">CRM</option>
+           <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>
+           <option value="SMM">SMM</option>
+           <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
+           <option value="SMMBIO">SMMBIO</option>
+           <option value="SMMHIGH">SMMHIGH</option>
+           <option value="WEB">WEB</option>
+           <option value="WEB-AOKI">WEB-AOKI</option>
+           <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
+           <option value="COIN">COIN</option>
+           <option value="ADS_IAB">ADS_IAB</option>
+           <option value="GLOVO">GLOVO</option>
+           <option value="SHOP">SHOP</option>`;
       }
-
-      // Define sources for SCHEDULE purpose
-      else if (purpose === "SCHEDULE") {
-        if (agency === "cpl_agency2") {
-          sources = ["GLOVO", "SCHEDULE"];
-        } else if (agency === "cpl_agency4") {
-          sources = ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"];
-        } else if (agency === "PMIMA") {
-          sources = ["CSC", "MGM", "DCE2"];
-        } else if (agency === "GLOVO") {
-          sources = ["ORGANIC"];
-        }
-      }
-
-      // Sort sources alphabetically
-      sources.sort();
-
-      // Populate source dropdown
-      sources.forEach(function(source) {
-        var option = document.createElement("option");
-        option.value = source;
-        option.text = source;
-        sourceSelect.appendChild(option);
-      });
     }
 
     // Function to generate UTM URL
@@ -259,7 +206,7 @@
         return;
       }
 
-      // Base URL (change based on purpose)
+      // Base URL
       var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
 
       // Initialize URL components
@@ -276,13 +223,17 @@
           utm_campaign = "aoki";
           break;
         case "SMM":
-        case "SMMBIO":
-        case "SMMHIGH":
           utm_source = "social";
           break;
         case "SMM-AOKI-TEASER":
           utm_source = "social";
           utm_campaign = "aoki";
+          break;
+        case "SMMBIO":
+          utm_source = "social";
+          break;
+        case "SMMHIGH":
+          utm_source = "social";
           break;
         case "WEB":
           utm_source = "web";
@@ -295,18 +246,8 @@
           utm_source = "web";
           utm_campaign = "aoki";
           break;
-        case "SHOP":
-          utm_source = "shop";
-          utm_campaign = "avito";
-          break;
-        case "SHOP_WSP":
-        case "SHOP_CALL":
-          utm_source = "shop";
-          utm_campaign = "avito";
-          break;
         case "COIN":
-          utm_source = "munchy";  // For MUNCHY
-          utm_campaign = "coin_mechanic";
+          utm_source = "coin_mechanic";
           break;
         case "ADS_IAB":
           utm_source = "ads_iab";
@@ -316,34 +257,39 @@
           utm_source = "glovo";
           utm_campaign = "coin_mechanic";
           break;
-        case "ORGANIC":
-          utm_source = "organic";
+        case "SHOP":
+          utm_source = "shop";
+          utm_campaign = "avito";
           break;
-        case "CSC":
-        case "MGM":
-        case "DCE2":
-          utm_source = "schedule";
+        case "SHOP_WSP":
+          utm_source = "shop_wsp";
+          break;
+        case "SHOP_CALL":
+          utm_source = "shop_call";
+          break;
+        case "GLOVO":
+          utm_source = "glovo";
+          break;
+        default:
+          utm_source = source;
           break;
       }
 
-      // Prepare UTM URL
-      var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
-
-      // If TEST is checked, append "-TEST" to the URL
+      // Add "-TEST" to lead source and utm params if "TEST" checkbox is checked
       if (testChecked) {
-        utmUrl += "-TEST";
-        if (utm_source) {
-          utmUrl += "&utm_source=" + utm_source + "-TEST";
-        }
+        source += "-TEST";
+        utm_source += "-TEST";
         if (utm_campaign) {
-          utmUrl += "&utm_campaign=" + utm_campaign + "-TEST";
+          utm_campaign += "-TEST";
         }
-      } else {
-        if (utm_source && purpose === "URL") utmUrl += "&utm_source=" + utm_source;
-        if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
       }
 
-      // Output the generated URL
+      // Construct the final UTM URL
+      var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
+      if (utm_source) utmUrl += "&utm_source=" + utm_source;
+      if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
+
+      // Display the generated URL
       document.getElementById("utm-url").value = utmUrl;
     }
   </script>
