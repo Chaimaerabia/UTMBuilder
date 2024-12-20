@@ -211,6 +211,7 @@
         case "CSC":
         case "MGM":
         case "DCE2":
+          // No UTM source or campaign needed
           utm_source = "";
           utm_campaign = "";
           break;
@@ -245,10 +246,13 @@
 
       // Prepare UTM URL
       var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
-      
+
+      // If TEST is checked, append "-TEST" to the URL
       if (testChecked) {
         utmUrl += "-TEST";
-        utmUrl += "&utm_source=" + utm_source + "-TEST";
+        if (utm_source) {
+          utmUrl += "&utm_source=" + utm_source + "-TEST";
+        }
         if (utm_campaign) {
           utmUrl += "&utm_campaign=" + utm_campaign + "-TEST";
         }
@@ -261,5 +265,7 @@
       document.getElementById("utm-url").value = utmUrl;
     }
   </script>
+
 </body>
 </html>
+
