@@ -25,7 +25,7 @@
     }
     .input-group {
       margin-bottom: 20px;
-      display: none;  /* Hide all input groups initially */
+      display: none;  /* Initially hide all input groups */
     }
     label {
       font-size: 16px;
@@ -149,7 +149,7 @@
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
         document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
-        updateSourceOptions(); // Update source options based on the selected purpose
+        updateSourceOptions(purpose); // Update source options based on the selected purpose
       } else {
         document.getElementById("agency-group").style.display = "none";
         document.getElementById("source-group").style.display = "none";
@@ -158,8 +158,7 @@
     }
 
     // Function to update the source options based on the selected purpose
-    function updateSourceOptions() {
-      var purpose = document.getElementById("purpose").value;
+    function updateSourceOptions(purpose) {
       var sourceSelect = document.getElementById("source");
 
       // If purpose is "SCHEDULE", only show CSC and DCE2 sources
@@ -167,7 +166,7 @@
         sourceSelect.innerHTML = 
           `<option value="CSC">CSC</option>
            <option value="DCE2">DCE2</option>`;
-      } else {
+      } else if (purpose === "URL") {
         // If purpose is "URL", show the full list of sources for PMIMA
         sourceSelect.innerHTML = 
           `<option value="CSC">CSC</option>
@@ -231,4 +230,36 @@
           utm_source = "web";
           utm_campaign = "aoki";
           break;
-        case "WEB-AOKI
+        case "WEB-AOKI-TEASER":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "BRIDGING":
+          utm_source = "bridging";
+          break;
+        case "CRM-AOKI-TEASER":
+          utm_source = "crm";
+          utm_campaign = "aoki";
+          break;
+      }
+
+      // Prepare UTM URL
+      var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
+      
+      if (testChecked) {
+        utmUrl += "-TEST";
+        utmUrl += "&utm_source=" + utm_source + "-TEST";
+        if (utm_campaign) {
+          utmUrl += "&utm_campaign=" + utm_campaign + "-TEST";
+        }
+      } else {
+        if (utm_source) utmUrl += "&utm_source=" + utm_source;
+        if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
+      }
+
+      // Output the generated URL
+      document.getElementById("utm-url").value = utmUrl;
+    }
+  </script>
+</body>
+</html>
