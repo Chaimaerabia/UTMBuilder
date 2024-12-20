@@ -76,6 +76,14 @@
       text-align: center;
       margin-top: 10px;
     }
+    .checkbox-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .checkbox-container label {
+      font-size: 14px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -83,7 +91,16 @@
   <div class="container">
     <h1>Custom UTM URL Builder</h1>
 
-    <!-- Input for selecting Agency Name -->
+    <!-- Step 1: Choose Purpose of Visit -->
+    <div class="input-group">
+      <label for="purpose">Choose the purpose of your visit:</label>
+      <select id="purpose" onchange="updateSourceOptions()">
+        <option value="URL">URL</option>
+        <option value="SCHEDULE">SCHEDULE</option>
+      </select>
+    </div>
+
+    <!-- Step 2: Agency Name -->
     <div class="input-group">
       <label for="agency">Select Agency Name:</label>
       <select id="agency" onchange="updateSourceOptions()">
@@ -92,7 +109,7 @@
       </select>
     </div>
 
-    <!-- Input for selecting Source -->
+    <!-- Step 3: Source Name -->
     <div class="input-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
@@ -111,10 +128,17 @@
       </select>
     </div>
 
-    <!-- Button to generate UTM URL -->
+    <!-- Step 4: Test Checkbox -->
+    <div class="checkbox-container">
+      <label>
+        <input type="checkbox" id="test-checkbox"> TEST (Click here if you are testing the mechanic only, if not, leave it empty)
+      </label>
+    </div>
+
+    <!-- Step 5: Generate UTM URL -->
     <button onclick="generateUTMUrl()">Generate UTM URL</button>
 
-    <!-- Output container for generated UTM URL -->
+    <!-- Step 6: Output UTM URL -->
     <div class="output-container">
       <h3>Generated UTM URL:</h3>
       <input type="text" id="utm-url" readonly placeholder="Your UTM URL will appear here">
@@ -128,14 +152,13 @@
       var agency = document.getElementById("agency").value;
       var sourceSelect = document.getElementById("source");
 
-      // If agency is "SCHEDULE", limit the options to "CSC" and "DCE2"
       if (agency === "schedule") {
-        // Remove all options except CSC and DCE2
+        // Remove all options except for schedule-related ones
         sourceSelect.innerHTML = 
           `<option value="CSC">CSC</option>
            <option value="DCE2">DCE2</option>`;
       } else {
-        // Restore the full source list when "PMIMA" is selected
+        // Restore the full source list for PMIMA
         sourceSelect.innerHTML = 
           `<option value="CSC">CSC</option>
            <option value="MGM">MGM</option>
@@ -154,12 +177,12 @@
 
     // Function to generate UTM URL
     function generateUTMUrl() {
-      // Clear previous error message
-      document.getElementById("error-message").textContent = "";
+      document.getElementById("error-message").textContent = "";  // Clear previous error message
 
-      // Get user inputs
+      var purpose = document.getElementById("purpose").value;
+      var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
-      var agency = document.getElementById("agency").value; // Get selected agency
+      var testChecked = document.getElementById("test-checkbox").checked;
 
       // Validate that source is selected
       if (!source) {
@@ -167,14 +190,14 @@
         return;
       }
 
-      // Base URL for the selected agency
-      var baseUrl = agency === "schedule" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
+      // Base URL
+      var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
 
       // Initialize URL components
       var utm_source = "";
       var utm_campaign = "";
 
-      // Define source and campaign based on the source selection
+      // Define source and campaign based on the selected source
       switch (source) {
         case "CSC":
         case "MGM":
@@ -212,13 +235,23 @@
           break;
       }
 
+      // Add TEST if checkbox is checked
+      if (testChecked) {
+        source += "-TEST";
+        if (utm_source) {
+          utm_source += "-TEST";
+        }
+      }
+
       // Build the final URL
       var url = baseUrl + "agency=" + agency + "&source=" + source;
 
+      // Append utm_source if relevant
       if (utm_source) {
         url += "&utm_source=" + utm_source;
       }
 
+      // Append utm_campaign if relevant
       if (utm_campaign) {
         url += "&utm_campaign=" + utm_campaign;
       }
