@@ -108,7 +108,7 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency">
+      <select id="agency" onchange="updateSourceOptions()">
         <option value="PMIMA">PMIMA</option>
         <option value="MUNCHY">MUNCHY</option>
         <option value="GLOVO">GLOVO</option>
@@ -121,7 +121,7 @@
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
-        <!-- Options will be dynamically populated based on the purpose selection -->
+        <!-- Options will be dynamically populated based on the selected agency -->
       </select>
     </div>
 
@@ -144,7 +144,16 @@
   </div>
 
   <script>
-    // Function to update dropdown visibility based on purpose selection
+    // Mapping of agencies and their lead sources
+    const agencyLeadSources = {
+      'PMIMA': ['CRM', 'CRM-AOKI-TEASER', 'SMM', 'SMM-AOKI-TEASER', 'SMMBIO', 'SMMHIGH', 'WEB', 'WEB-AOKI', 'WEB-AOKI-TEASER'],
+      'MUNCHY': ['COIN'],
+      'GLOVO': ['COIN'],
+      'cpl_agency2': ['GLOVO', 'SCHEDULE'],
+      'cpl_agency4': ['CRM', 'ADS_IAB', 'SHOP', 'SCHEDULE', 'GLOVO', 'SHOP_WSP', 'SHOP_CALL']
+    };
+
+    // Function to update dropdowns visibility based on purpose selection
     function updateDropdowns() {
       var purpose = document.getElementById("purpose").value;
 
@@ -153,7 +162,7 @@
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
         document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
-        updateSourceOptions(purpose); // Update source options based on the selected purpose
+        updateSourceOptions(); // Update source options based on the selected agency
       } else {
         document.getElementById("agency-group").style.display = "none";
         document.getElementById("source-group").style.display = "none";
@@ -161,33 +170,22 @@
       }
     }
 
-    // Function to update the source options based on the selected purpose
-    function updateSourceOptions(purpose) {
+    // Function to update the source options based on the selected agency
+    function updateSourceOptions() {
+      var agency = document.getElementById("agency").value;
       var sourceSelect = document.getElementById("source");
 
-      if (purpose === "SCHEDULE") {
-        sourceSelect.innerHTML = 
-          `<option value="CSC">CSC</option>
-           <option value="DCE2">DCE2</option>
-           <option value="MGM">MGM</option>
-           <option value="GLOVO">GLOVO</option>
-           <option value="SHOP_WSP">SHOP_WSP</option>
-           <option value="SHOP_CALL">SHOP_CALL</option>`;
-      } else if (purpose === "URL") {
-        sourceSelect.innerHTML = 
-          `<option value="CRM">CRM</option>
-           <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>
-           <option value="SMM">SMM</option>
-           <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
-           <option value="SMMBIO">SMMBIO</option>
-           <option value="SMMHIGH">SMMHIGH</option>
-           <option value="WEB">WEB</option>
-           <option value="WEB-AOKI">WEB-AOKI</option>
-           <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
-           <option value="COIN">COIN</option>
-           <option value="ADS_IAB">ADS_IAB</option>
-           <option value="GLOVO">GLOVO</option>
-           <option value="SHOP">SHOP</option>`;
+      // Clear previous options
+      sourceSelect.innerHTML = '';
+
+      // Add sources dynamically based on the selected agency
+      if (agency && agencyLeadSources[agency]) {
+        agencyLeadSources[agency].forEach(function(source) {
+          var option = document.createElement("option");
+          option.value = source;
+          option.textContent = source;
+          sourceSelect.appendChild(option);
+        });
       }
     }
 
@@ -207,13 +205,12 @@
       }
 
       // Base URL
-      var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
+      var baseUrl = purpose === "URL" ? "https://iqostest.com/?" : "https://iqostest.com/schedule?";
 
-      // Initialize URL components
+      // Set up UTM parameters based on the lead source
       var utm_source = "";
       var utm_campaign = "";
 
-      // Define source and campaign based on the selected source
       switch (source) {
         case "CRM":
           utm_source = "crm";
@@ -266,9 +263,6 @@
           break;
         case "SHOP_CALL":
           utm_source = "shop_call";
-          break;
-        case "GLOVO":
-          utm_source = "glovo";
           break;
         default:
           utm_source = source;
