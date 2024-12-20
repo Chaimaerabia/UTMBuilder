@@ -110,6 +110,10 @@
       <label for="agency">Select Agency Name:</label>
       <select id="agency">
         <option value="PMIMA">PMIMA</option>
+        <option value="MUNCHY">MUNCHY</option>
+        <option value="GLOVO">GLOVO</option>
+        <option value="cpl_agency2">cpl_agency2</option>
+        <option value="cpl_agency4">cpl_agency4</option>
       </select>
     </div>
 
@@ -157,31 +161,51 @@
       }
     }
 
-    // Function to update the source options based on the selected purpose
+    // Function to update the source options based on the selected purpose and agency
     function updateSourceOptions(purpose) {
       var sourceSelect = document.getElementById("source");
+      var agency = document.getElementById("agency").value;
 
-      // If purpose is "SCHEDULE", only show CSC and DCE2 sources
+      // Clear previous options
+      sourceSelect.innerHTML = "";
+
+      var sources = [];
+
       if (purpose === "SCHEDULE") {
-        sourceSelect.innerHTML = 
-          `<option value="CSC">CSC</option>
-           <option value="DCE2">DCE2</option>`;
+        // If purpose is "SCHEDULE", show sources for cpl_agency4 and cpl_agency2
+        if (agency === "cpl_agency4") {
+          sources = ["SCHEDULE"];
+        } else if (agency === "cpl_agency2") {
+          sources = ["SCHEDULE"];
+        }
       } else if (purpose === "URL") {
-        // If purpose is "URL", show the full list of sources for PMIMA
-        sourceSelect.innerHTML = 
-          `<option value="CSC">CSC</option>
-           <option value="MGM">MGM</option>
-           <option value="DCE2">DCE2</option>
-           <option value="SMM">SMM</option>
-           <option value="SMM-AOKI-TEASER">SMM-AOKI-TEASER</option>
-           <option value="SMMBIO">SMMBIO</option>
-           <option value="SMMHIGH">SMMHIGH</option>
-           <option value="WEB">WEB</option>
-           <option value="WEB-AOKI">WEB-AOKI</option>
-           <option value="WEB-AOKI-TEASER">WEB-AOKI-TEASER</option>
-           <option value="BRIDGING">BRIDGING</option>
-           <option value="CRM-AOKI-TEASER">CRM-AOKI-TEASER</option>`;
+        // If purpose is "URL", show the full list of sources for different agencies
+        if (agency === "PMIMA") {
+          sources = [
+            "CSC", "MGM", "DCE2", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", 
+            "WEB", "WEB-AOKI", "WEB-AOKI-TEASER", "BRIDGING", "CRM"
+          ];
+        } else if (agency === "MUNCHY") {
+          sources = ["COIN"];
+        } else if (agency === "GLOVO") {
+          sources = ["COIN"];
+        } else if (agency === "cpl_agency4") {
+          sources = ["ADS_IAB", "CRM", "GLOVO", "SHOP", "SHOP_CALL", "SHOP_WSP"];
+        } else if (agency === "cpl_agency2") {
+          sources = ["GLOVO"];
+        }
       }
+
+      // Sort the sources alphabetically
+      sources.sort();
+
+      // Add sorted options to the source dropdown
+      sources.forEach(function(source) {
+        var option = document.createElement("option");
+        option.value = source;
+        option.textContent = source;
+        sourceSelect.appendChild(option);
+      });
     }
 
     // Function to generate UTM URL
@@ -206,41 +230,42 @@
       var utm_source = "";
       var utm_campaign = "";
 
-      // Define source and campaign based on the selected source
-      switch (source) {
-        case "CSC":
-        case "MGM":
-        case "DCE2":
-          // No UTM source or campaign needed
-          utm_source = "";
-          utm_campaign = "";
+      // Define source and campaign based on the selected source and agency
+      switch (agency) {
+        case "PMIMA":
+          if (source === "CRM") {
+            utm_source = "crm";
+            utm_campaign = "avito";
+          }
           break;
-        case "SMM":
-        case "SMMBIO":
-        case "SMMHIGH":
-          utm_source = "social";
+        case "MUNCHY":
+          if (source === "COIN") {
+            utm_source = "munchy";
+            utm_campaign = "coin_mechanic";
+          }
           break;
-        case "SMM-AOKI-TEASER":
-          utm_source = "social";
-          utm_campaign = "aoki";
+        case "GLOVO":
+          if (source === "COIN") {
+            utm_source = "glovo";
+            utm_campaign = "coin_mechanic";
+          }
           break;
-        case "WEB":
-          utm_source = "web";
+        case "cpl_agency4":
+          if (source === "CRM") {
+            utm_source = "crm";
+            utm_campaign = "avito";
+          } else if (source === "ADS_IAB") {
+            utm_source = "ads_iab";
+            utm_campaign = "avito";
+          } else if (source === "SHOP") {
+            utm_source = "shop";
+            utm_campaign = "avito";
+          }
           break;
-        case "WEB-AOKI":
-          utm_source = "web";
-          utm_campaign = "aoki";
-          break;
-        case "WEB-AOKI-TEASER":
-          utm_source = "web";
-          utm_campaign = "aoki";
-          break;
-        case "BRIDGING":
-          utm_source = "bridging";
-          break;
-        case "CRM-AOKI-TEASER":
-          utm_source = "crm";
-          utm_campaign = "aoki";
+        case "cpl_agency2":
+          if (source === "GLOVO") {
+            utm_source = "glovo";
+          }
           break;
       }
 
@@ -268,4 +293,3 @@
 
 </body>
 </html>
-
