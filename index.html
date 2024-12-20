@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+     <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -179,7 +180,7 @@
       } else if (agency === "GLOVO") {
         sources = ["COIN"];
       } else if (agency === "cpl_agency4") {
-        sources = ["ADS_IAB", "CRM", "GLOVO", "SHOP", "SHOP_CALL", "SHOP_WSP"];
+        sources = ["ADS_IAB", "CRM", "GLOVO", "SHOP", "SHOP_CALL", "SHOP_WSP", "TOUCHINGPOINT"];
       } else if (agency === "cpl_agency2") {
         sources = ["GLOVO"];
       } else if (agency === "cpl_agency3") {
@@ -258,6 +259,9 @@
             utm_campaign = "avito";
           } else if (source === "SHOP") {
             utm_source = "shop";
+            utm_campaign = "avito";
+          } else if (source === "TOUCHINGPOINT") {
+            utm_source = "touchingpoint";
             utm_campaign = "avito";
           }
           break;
