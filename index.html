@@ -108,7 +108,7 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency">
+      <select id="agency" onchange="updateSourceOptions()">
         <option value="PMIMA">PMIMA</option>
         <option value="MUNCHY">MUNCHY</option>
         <option value="GLOVO">GLOVO</option>
@@ -121,7 +121,7 @@
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
-        <!-- The options will be dynamically populated based on the purpose selection -->
+        <!-- The options will be dynamically populated based on the agency selection -->
       </select>
     </div>
 
@@ -153,7 +153,7 @@
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
         document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
-        updateSourceOptions(purpose); // Update source options based on the selected purpose
+        updateSourceOptions(); // Update source options based on the selected agency
       } else {
         document.getElementById("agency-group").style.display = "none";
         document.getElementById("source-group").style.display = "none";
@@ -161,8 +161,8 @@
       }
     }
 
-    // Function to update the source options based on the selected purpose and agency
-    function updateSourceOptions(purpose) {
+    // Function to update the source options based on the selected agency
+    function updateSourceOptions() {
       var sourceSelect = document.getElementById("source");
       var agency = document.getElementById("agency").value;
 
@@ -171,29 +171,19 @@
 
       var sources = [];
 
-      if (purpose === "SCHEDULE") {
-        // If purpose is "SCHEDULE", show sources for cpl_agency4 and cpl_agency2
-        if (agency === "cpl_agency4") {
-          sources = ["SCHEDULE"];
-        } else if (agency === "cpl_agency2") {
-          sources = ["SCHEDULE"];
-        }
-      } else if (purpose === "URL") {
-        // If purpose is "URL", show the full list of sources for different agencies
-        if (agency === "PMIMA") {
-          sources = [
-            "CSC", "MGM", "DCE2", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", 
-            "WEB", "WEB-AOKI", "WEB-AOKI-TEASER", "BRIDGING", "CRM"
-          ];
-        } else if (agency === "MUNCHY") {
-          sources = ["COIN"];
-        } else if (agency === "GLOVO") {
-          sources = ["COIN"];
-        } else if (agency === "cpl_agency4") {
-          sources = ["ADS_IAB", "CRM", "GLOVO", "SHOP", "SHOP_CALL", "SHOP_WSP"];
-        } else if (agency === "cpl_agency2") {
-          sources = ["GLOVO"];
-        }
+      // Define the sources for each agency
+      if (agency === "PMIMA") {
+        sources = ["CRM", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER", "BRIDGING"];
+      } else if (agency === "MUNCHY") {
+        sources = ["COIN"];
+      } else if (agency === "GLOVO") {
+        sources = ["COIN"];
+      } else if (agency === "cpl_agency4") {
+        sources = ["ADS_IAB", "CRM", "GLOVO", "SHOP", "SHOP_CALL", "SHOP_WSP"];
+      } else if (agency === "cpl_agency2") {
+        sources = ["GLOVO"];
+      } else if (agency === "cpl_agency3") {
+        sources = ["SCHEDULE"];
       }
 
       // Sort the sources alphabetically
@@ -236,6 +226,15 @@
           if (source === "CRM") {
             utm_source = "crm";
             utm_campaign = "avito";
+          } else if (source === "SMM" || source === "SMMBIO" || source === "SMMHIGH") {
+            utm_source = "social";
+          } else if (source === "SMM-AOKI-TEASER") {
+            utm_source = "social";
+            utm_campaign = "aoki";
+          } else if (source === "WEB" || source === "WEB-AOKI" || source === "WEB-AOKI-TEASER") {
+            utm_source = "web";
+          } else if (source === "BRIDGING") {
+            utm_source = "bridging";
           }
           break;
         case "MUNCHY":
