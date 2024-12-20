@@ -108,7 +108,7 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency">
+      <select id="agency" onchange="updateSourceOptions()">
         <!-- Options will be dynamically populated -->
       </select>
     </div>
@@ -215,7 +215,7 @@
         } else if (agency === "GLOVO") {
           sources = ["COIN"];
         } else if (agency === "cpl_agency4") {
-          sources = ["CRM", "ADS_IAB", "SHOP"];
+          sources = ["CRM", "ADS_IAB", "SHOP", "SHOP_WSP", "SHOP_CALL"];
         }
       } else if (purpose === "SCHEDULE") {
         if (agency === "PMIMA") {
@@ -241,32 +241,106 @@
       });
     }
 
-    // Function to generate UTM URL based on selected options
+    // Function to generate UTM URL
     function generateUTMUrl() {
+      document.getElementById("error-message").textContent = "";  // Clear previous error message
+
       var purpose = document.getElementById("purpose").value;
       var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
-      var test = document.getElementById("test-checkbox").checked;
+      var testChecked = document.getElementById("test-checkbox").checked;
 
-      // Validate that all selections are made
-      if (!purpose || !agency || !source) {
-        document.getElementById("error-message").textContent = "Please select all fields.";
+      // Validate that source is selected
+      if (!source) {
+        document.getElementById("error-message").textContent = "Please select a lead source.";
         return;
-      } else {
-        document.getElementById("error-message").textContent = "";
       }
 
-      // Base UTM URL
-      var utmUrl = "https://www.example.com?utm_source=" + source + "&utm_medium=" + agency;
+      // Base URL
+      var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
 
-      // Apply campaign based on source and agency
-      if (purpose === "URL") {
-        utmUrl += "&utm_campaign=" + (test ? source + "-TEST" : source);
-      } else {
-        utmUrl += "&utm_campaign=SCHEDULE";
+      // Initialize URL components
+      var utm_source = "";
+      var utm_campaign = "";
+
+      // Define source and campaign based on the selected source
+      switch (source) {
+        case "CRM":
+          utm_source = "crm";
+          break;
+        case "CRM-AOKI-TEASER":
+          utm_source = "crm";
+          utm_campaign = "aoki";
+          break;
+        case "SMM":
+        case "SMMBIO":
+        case "SMMHIGH":
+          utm_source = "social";
+          break;
+        case "SMM-AOKI-TEASER":
+          utm_source = "social";
+          utm_campaign = "aoki";
+          break;
+        case "WEB":
+          utm_source = "web";
+          break;
+        case "WEB-AOKI":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "WEB-AOKI-TEASER":
+          utm_source = "web";
+          utm_campaign = "aoki";
+          break;
+        case "SHOP":
+          utm_source = "shop";
+          utm_campaign = "avito";
+          break;
+        case "SHOP_WSP":
+        case "SHOP_CALL":
+          utm_source = "shop";
+          utm_campaign = "avito";
+          break;
+        case "COIN":
+          utm_source = "munchy";  // For MUNCHY
+          utm_campaign = "coin_mechanic";
+          break;
+        case "ADS_IAB":
+          utm_source = "ads_iab";
+          utm_campaign = "avito";
+          break;
+        case "GLOVO":
+          utm_source = "glovo";
+          utm_campaign = "coin_mechanic";
+          break;
+        case "ORGANIC":
+          utm_source = "organic";
+          break;
+        case "CSC":
+        case "MGM":
+        case "DCE2":
+          utm_source = "schedule";
+          break;
       }
 
-      // Output the final URL
+      // Prepare UTM URL
+      var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
+
+      // If TEST is checked, append "-TEST" to the URL
+      if (testChecked) {
+        utmUrl += "-TEST";
+        if (utm_source) {
+          utmUrl += "&utm_source=" + utm_source + "-TEST";
+        }
+        if (utm_campaign) {
+          utmUrl += "&utm_campaign=" + utm_campaign + "-TEST";
+        }
+      } else {
+        if (utm_source) utmUrl += "&utm_source=" + utm_source;
+        if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
+      }
+
+      // Output the generated URL
       document.getElementById("utm-url").value = utmUrl;
     }
   </script>
