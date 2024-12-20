@@ -217,15 +217,18 @@
         } else if (agency === "cpl_agency4") {
           sources = ["CRM", "ADS_IAB", "SHOP", "SHOP_WSP", "SHOP_CALL"];
         }
-      } else if (purpose === "SCHEDULE") {
-        if (agency === "PMIMA") {
-          sources = ["CSC", "MGM", "DCE2"];
-        } else if (agency === "GLOVO") {
-          sources = ["ORGANIC"];
-        } else if (agency === "cpl_agency2") {
+      }
+
+      // Define sources for SCHEDULE purpose
+      else if (purpose === "SCHEDULE") {
+        if (agency === "cpl_agency2") {
           sources = ["GLOVO", "SCHEDULE"];
         } else if (agency === "cpl_agency4") {
           sources = ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"];
+        } else if (agency === "PMIMA") {
+          sources = ["CSC", "MGM", "DCE2"];
+        } else if (agency === "GLOVO") {
+          sources = ["ORGANIC"];
         }
       }
 
