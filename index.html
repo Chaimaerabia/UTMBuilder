@@ -25,7 +25,7 @@
     }
     .input-group {
       margin-bottom: 20px;
-      display: block;
+      display: none;  /* Initially hide all input groups */
     }
     label {
       font-size: 16px;
@@ -80,13 +80,13 @@
     .checkbox-container {
       margin-top: 20px;
       text-align: center;
-      background-color: red;
+      background-color: red;  /* Red background */
       padding: 10px;
       border-radius: 5px;
     }
     .checkbox-container label {
       font-size: 14px;
-      color: white;
+      color: white;  /* White text */
     }
   </style>
 </head>
@@ -96,7 +96,7 @@
     <h1>Custom UTM URL Builder</h1>
 
     <!-- Step 1: Choose Purpose of Visit -->
-    <div class="input-group" id="purpose-group">
+    <div class="input-group" id="purpose-group" style="display:block;">
       <label for="purpose">Choose the purpose of your visit:</label>
       <select id="purpose" onchange="updateDropdowns()">
         <option value="">Select Purpose</option>
@@ -108,8 +108,12 @@
     <!-- Step 2: Agency Name (Initially hidden) -->
     <div class="input-group" id="agency-group">
       <label for="agency">Select Agency Name:</label>
-      <select id="agency" onchange="populateSources()">
-        <option value="">Select Agency</option>
+      <select id="agency">
+        <option value="PMIMA">PMIMA</option>
+        <option value="MUNCHY">MUNCHY</option>
+        <option value="GLOVO">GLOVO</option>
+        <option value="cpl_agency2">cpl_agency2</option>
+        <option value="cpl_agency4">cpl_agency4</option>
       </select>
     </div>
 
@@ -117,12 +121,12 @@
     <div class="input-group" id="source-group">
       <label for="source">Select Lead Source:</label>
       <select id="source">
-        <option value="">Select Lead Source</option>
+        <!-- The options will be dynamically populated based on the purpose selection -->
       </select>
     </div>
 
     <!-- Step 4: Test Checkbox (Initially hidden) -->
-    <div class="checkbox-container" id="test-checkbox-container">
+    <div class="checkbox-container" id="test-checkbox-container" style="display: none;">
       <label>
         <input type="checkbox" id="test-checkbox"> TEST (Click here if you are testing the mechanic only, if not, leave it empty)
       </label>
@@ -148,162 +152,159 @@
       if (purpose) {
         document.getElementById("agency-group").style.display = "block";
         document.getElementById("source-group").style.display = "block";
-        document.getElementById("test-checkbox-container").style.display = "block";
-        populateAgencies(purpose);
+        document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
+        updateSourceOptions(purpose); // Update source options based on the selected purpose
       } else {
         document.getElementById("agency-group").style.display = "none";
         document.getElementById("source-group").style.display = "none";
-        document.getElementById("test-checkbox-container").style.display = "none";
-        document.getElementById("utm-url").value = "";
-        document.getElementById("error-message").innerText = "";
+        document.getElementById("test-checkbox-container").style.display = "none";  // Hide the TEST checkbox
       }
     }
 
-    // Function to populate agency options based on selected purpose
-    function populateAgencies(purpose) {
-      var agencySelect = document.getElementById("agency");
-      agencySelect.innerHTML = "<option value=''>Select Agency</option>"; // Reset
-
-      // Populate agency dropdown based on the selected purpose
-      if (purpose === "URL") {
-        const agencies = [
-          { name: "PMIMA", sources: ["CRM", "CRM-AOKI-TEASER", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER"] },
-          { name: "MUNCHY", sources: ["COIN"] },
-          { name: "GLOVO", sources: ["COIN"] },
-          { name: "cpl_agency4", sources: ["CRM", "ADS_IAB", "SHOP"] }
-        ];
-
-        agencies.forEach(agency => {
-          let option = document.createElement("option");
-          option.value = agency.name;
-          option.innerText = agency.name;
-          agencySelect.appendChild(option);
-        });
-      } else if (purpose === "SCHEDULE") {
-        const agencies = [
-          { name: "PMIMA", sources: ["CSC", "MGM", "DCE2"] },
-          { name: "GLOVO", sources: ["ORGANIC"] },
-          { name: "cpl_agency2", sources: ["GLOVO", "SCHEDULE"] },
-          { name: "cpl_agency4", sources: ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"] }
-        ];
-
-        agencies.forEach(agency => {
-          let option = document.createElement("option");
-          option.value = agency.name;
-          option.innerText = agency.name;
-          agencySelect.appendChild(option);
-        });
-      }
-    }
-
-    // Function to populate source options based on selected agency
-    function populateSources() {
-      var agency = document.getElementById("agency").value;
-      var purpose = document.getElementById("purpose").value;
+    // Function to update the source options based on the selected purpose
+    function updateSourceOptions(purpose) {
       var sourceSelect = document.getElementById("source");
-      sourceSelect.innerHTML = "<option value=''>Select Lead Source</option>"; // Reset
 
-      // Define sources for each agency
-      const agencySources = {
-        "PMIMA": {
-          "CRM": "utm_source=crm",
-          "CRM-AOKI-TEASER": "utm_source=crm&utm_campaign=aoki",
-          "SMM": "utm_source=social",
-          "SMM-AOKI-TEASER": "utm_source=social&utm_campaign=aoki",
-          "SMMBIO": "utm_source=social",
-          "SMMHIGH": "utm_source=social",
-          "WEB": "utm_source=web",
-          "WEB-AOKI": "utm_source=web&utm_campaign=aoki",
-          "WEB-AOKI-TEASER": "utm_source=web&utm_campaign=aoki"
-        },
-        "MUNCHY": {
-          "COIN": "utm_source=munchy&utm_campaign=coin_mechanic"
-        },
-        "GLOVO": {
-          "COIN": "utm_source=glovo&utm_campaign=coin_mechanic"
-        },
-        "cpl_agency4": {
-          "CRM": "utm_source=crm&utm_campaign=avito",
-          "ADS_IAB": "utm_source=ads_iab&utm_campaign=avito",
-          "SHOP": "utm_source=shop&utm_campaign=avito"
+      // Clear the current source options
+      sourceSelect.innerHTML = "";
+
+      if (purpose === "URL") {
+        // URL purpose sources
+        var sources = {
+          PMIMA: ["CRM", "CRM-AOKI-TEASER", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER"],
+          MUNCHY: ["COIN"],
+          GLOVO: ["COIN"],
+          cpl_agency4: ["CRM", "ADS_IAB", "SHOP", "GLOVO"],
+          cpl_agency2: ["GLOVO"]
+        };
+
+        // Get the selected agency
+        var agency = document.getElementById("agency").value;
+
+        // Add source options based on selected agency
+        if (sources[agency]) {
+          sources[agency].forEach(function(source) {
+            var option = document.createElement("option");
+            option.value = source;
+            option.textContent = source;
+            sourceSelect.appendChild(option);
+          });
         }
-      };
+      } else if (purpose === "SCHEDULE") {
+        // SCHEDULE purpose sources
+        var scheduleSources = {
+          PMIMA: ["CSC", "MGM", "DCE2"],
+          GLOVO: ["ORGANIC"],
+          cpl_agency2: ["GLOVO", "SCHEDULE"],
+          cpl_agency4: ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"]
+        };
 
-      // Populate source dropdown for URL purpose only
-      if (purpose === "URL" && agencySources[agency]) {
-        const sources = agencySources[agency];
-        for (let leadSource in sources) {
-          let option = document.createElement("option");
-          option.value = leadSource;
-          option.innerText = leadSource;
-          sourceSelect.appendChild(option);
+        // Get the selected agency
+        var agency = document.getElementById("agency").value;
+
+        // Add source options based on selected agency
+        if (scheduleSources[agency]) {
+          scheduleSources[agency].forEach(function(source) {
+            var option = document.createElement("option");
+            option.value = source;
+            option.textContent = source;
+            sourceSelect.appendChild(option);
+          });
         }
       }
     }
 
-    // Function to generate UTM URL based on selections
+    // Function to generate UTM URL
     function generateUTMUrl() {
+      document.getElementById("error-message").textContent = "";  // Clear previous error message
+
+      var purpose = document.getElementById("purpose").value;
       var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
-      var purpose = document.getElementById("purpose").value;
-      var isTest = document.getElementById("test-checkbox").checked;
+      var testChecked = document.getElementById("test-checkbox").checked;
 
-      var errorMessage = "";
-
-      // Validate inputs
-      if (!agency || !source || !purpose) {
-        errorMessage = "Please select Purpose, Agency, and Source.";
-        document.getElementById("utm-url").value = "";
-        document.getElementById("error-message").innerText = errorMessage;
+      // Validate that source is selected
+      if (!source) {
+        document.getElementById("error-message").textContent = "Please select a lead source.";
         return;
       }
 
-      // Define UTM sources for URL purpose (when test checkbox is checked)
-      const agencySources = {
-        "PMIMA": {
-          "CRM": "utm_source=crm",
-          "CRM-AOKI-TEASER": "utm_source=crm&utm_campaign=aoki",
-          "SMM": "utm_source=social",
-          "SMM-AOKI-TEASER": "utm_source=social&utm_campaign=aoki",
-          "SMMBIO": "utm_source=social",
-          "SMMHIGH": "utm_source=social",
-          "WEB": "utm_source=web",
-          "WEB-AOKI": "utm_source=web&utm_campaign=aoki",
-          "WEB-AOKI-TEASER": "utm_source=web&utm_campaign=aoki"
-        },
-        "MUNCHY": {
-          "COIN": "utm_source=munchy&utm_campaign=coin_mechanic"
-        },
-        "GLOVO": {
-          "COIN": "utm_source=glovo&utm_campaign=coin_mechanic"
-        },
-        "cpl_agency4": {
-          "CRM": "utm_source=crm&utm_campaign=avito",
-          "ADS_IAB": "utm_source=ads_iab&utm_campaign=avito",
-          "SHOP": "utm_source=shop&utm_campaign=avito"
-        }
-      };
+      var baseUrl = (purpose === "SCHEDULE") ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
+      var utm_source = "";
+      var utm_campaign = "";
 
-      // Build URL based on selected agency and lead source
-      var utmSource = agencySources[agency] ? agencySources[agency][source] : "";
-      
-      // Add '-TEST' suffix if the checkbox is checked
-      if (isTest && utmSource) {
-        utmSource = utmSource.replace("utm_source=", "utm_source=" + source + "-TEST");
-        if (utmSource.includes("utm_campaign")) {
-          utmSource = utmSource.replace("utm_campaign=", "utm_campaign=" + source + "-TEST");
+      // Define source and campaign based on the selected source
+      if (purpose === "URL") {
+        switch (source) {
+          case "CRM":
+            utm_source = "crm";
+            utm_campaign = "crm";
+            break;
+          case "CRM-AOKI-TEASER":
+            utm_source = "crm";
+            utm_campaign = "aoki";
+            break;
+          case "SMM":
+            utm_source = "social";
+            utm_campaign = "social";
+            break;
+          case "SMM-AOKI-TEASER":
+            utm_source = "social";
+            utm_campaign = "aoki";
+            break;
+          case "SMMBIO":
+            utm_source = "social";
+            utm_campaign = "social";
+            break;
+          case "SMMHIGH":
+            utm_source = "social";
+            utm_campaign = "social";
+            break;
+          case "WEB":
+            utm_source = "web";
+            utm_campaign = "web";
+            break;
+          case "WEB-AOKI":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "WEB-AOKI-TEASER":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "COIN":
+            utm_source = "munchy";
+            utm_campaign = "coin_mechanic";
+            break;
+          case "ADS_IAB":
+            utm_source = "ads_iab";
+            utm_campaign = "avito";
+            break;
+          case "SHOP":
+            utm_source = "shop";
+            utm_campaign = "avito";
+            break;
+          default:
+            break;
         }
       }
-      
-      // Construct the final UTM URL
-      var utmUrl = "";
-      if (purpose === "URL" && utmSource) {
-        utmUrl = "https://example.com/?" + utmSource;
+
+      // Add -TEST to lead source and campaign if test is checked
+      if (testChecked) {
+        source += "-TEST";
+        utm_source += "-TEST";
+        utm_campaign += "-TEST";
       }
 
-      // Display the URL or error message
-      document.getElementById("utm-url").value = utmUrl;
-      document.getElementById("error-message").innerText = errorMessage;
+      // Build the final URL
+      var finalUrl = baseUrl + "agency=" + agency + "&source=" + source;
+      
+      if (purpose === "URL") {
+        finalUrl += "&utm_source=" + utm_source + "&utm_campaign=" + utm_campaign;
+      }
+
+      // Output the final URL to the input field
+      document.getElementById("utm-url").value = finalUrl;
     }
   </script>
 </body>
