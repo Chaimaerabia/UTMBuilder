@@ -110,6 +110,10 @@
       <label for="agency">Select Agency Name:</label>
       <select id="agency">
         <option value="PMIMA">PMIMA</option>
+        <option value="MUNCHY">MUNCHY</option>
+        <option value="GLOVO">GLOVO</option>
+        <option value="cpl_agency4">cpl_agency4</option>
+        <option value="cpl_agency2">cpl_agency2</option>
       </select>
     </div>
 
@@ -192,88 +196,96 @@
       }
     }
 
-    // Function to generate UTM URL
+    // Function to generate the UTM URL based on the selected options
     function generateUTMUrl() {
-      document.getElementById("error-message").textContent = "";  // Clear previous error message
-
       var purpose = document.getElementById("purpose").value;
       var agency = document.getElementById("agency").value;
       var source = document.getElementById("source").value;
       var testChecked = document.getElementById("test-checkbox").checked;
 
-      // Validate that source is selected
-      if (!source) {
-        document.getElementById("error-message").textContent = "Please select a lead source.";
-        return;
-      }
+      var baseUrl = "https://example.com/?";
+      var utm_source, utm_campaign;
 
-      // Base URL
-      var baseUrl = purpose === "SCHEDULE" ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
-
-      // Initialize URL components
-      var utm_source = "";
-      var utm_campaign = "";
-
-      // Define source and campaign based on the selected source
-      switch (source) {
-        case "CRM":
-        case "CRM-AOKI-TEASER":
-          utm_source = "crm";
-          if (source === "CRM-AOKI-TEASER") utm_campaign = "aoki";
-          break;
-        case "SMM":
-        case "SMM-AOKI-TEASER":
-        case "SMMBIO":
-        case "SMMHIGH":
-          utm_source = "social";
-          if (source === "SMM-AOKI-TEASER") utm_campaign = "aoki";
-          break;
-        case "WEB":
-        case "WEB-AOKI":
-        case "WEB-AOKI-TEASER":
-          utm_source = "web";
-          if (source === "WEB-AOKI" || source === "WEB-AOKI-TEASER") utm_campaign = "aoki";
-          break;
-        case "COIN":
-          utm_source = "coin_mechanic";
-          break;
-        case "ADS_IAB":
-          utm_source = "ads_iab";
-          utm_campaign = "avito";
-          break;
-        case "SHOP":
-          utm_source = "shop";
-          utm_campaign = "avito";
-          break;
-        case "GLOVO":
-          utm_source = "glovo";
-          utm_campaign = "coin_mechanic";
-          break;
-        default:
-          utm_source = source;
-          break;
-      }
-
-      // If TEST is checked, append "-TEST" to lead source
-      if (testChecked) {
-        source += "-TEST";
-        if (utm_source) {
-          utm_source += "-TEST";
+      // Handle URL generation for "URL" purpose
+      if (purpose === "URL") {
+        switch (source) {
+          case "CRM":
+            utm_source = "crm";
+            break;
+          case "CRM-AOKI-TEASER":
+            utm_source = "crm";
+            utm_campaign = "aoki";
+            break;
+          case "SMM":
+            utm_source = "social";
+            break;
+          case "SMM-AOKI-TEASER":
+            utm_source = "social";
+            utm_campaign = "aoki";
+            break;
+          case "SMMBIO":
+            utm_source = "social";
+            break;
+          case "SMMHIGH":
+            utm_source = "social";
+            break;
+          case "WEB":
+            utm_source = "web";
+            break;
+          case "WEB-AOKI":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "WEB-AOKI-TEASER":
+            utm_source = "web";
+            utm_campaign = "aoki";
+            break;
+          case "COIN":
+            utm_source = "coin_mechanic";
+            break;
+          case "ADS_IAB":
+            utm_source = "ads_iab";
+            utm_campaign = "avito";
+            break;
+          case "SHOP":
+            utm_source = "shop";
+            utm_campaign = "avito";
+            break;
+          default:
+            utm_source = source;
+            break;
         }
-        if (utm_campaign) {
-          utm_campaign += "-TEST";
+
+        // If TEST is checked, append "-TEST" to lead source and UTM parameters
+        if (testChecked) {
+          source += "-TEST";
+          if (utm_source) {
+            utm_source += "-TEST";
+          }
+          if (utm_campaign) {
+            utm_campaign += "-TEST";
+          }
         }
+
+        // Prepare UTM URL
+        var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
+        if (utm_source) utmUrl += "&utm_source=" + utm_source;
+        if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
+
+        document.getElementById("utm-url").value = utmUrl;
+      } else {
+        // Handle SCHEDULE URL generation (No UTM parameters for SCHEDULE)
+        var scheduleUrl = baseUrl + "agency=" + agency + "&source=" + source;
+        
+        // If TEST is checked, append "-TEST" to lead source for SCHEDULE
+        if (testChecked) {
+          source += "-TEST";
+        }
+
+        document.getElementById("utm-url").value = scheduleUrl;
       }
-
-      // Prepare UTM URL
-      var utmUrl = baseUrl + "agency=" + agency + "&source=" + source;
-      if (utm_source) utmUrl += "&utm_source=" + utm_source;
-      if (utm_campaign) utmUrl += "&utm_campaign=" + utm_campaign;
-
-      // Display the generated URL
-      document.getElementById("utm-url").value = utmUrl;
     }
   </script>
+
 </body>
 </html>
-
