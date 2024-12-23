@@ -7,47 +7,105 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
     }
     label, select, button {
       display: block;
+      width: 100%;
       margin: 10px 0;
+      font-size: 1.1em;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, button {
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #testCheckboxContainer {
+      display: none;
+      margin-top: 20px;
+      background-color: #ffebeb;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    #testCheckbox {
+      margin-right: 10px;
+      accent-color: red;
+    }
+    #generatedLink {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #eef;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      word-wrap: break-word;
     }
   </style>
 </head>
 <body>
-  <h1>Link Generator</h1>
-  <!-- Purpose Selection -->
-  <label for="purpose">Choose the purpose of your link:</label>
-  <select id="purpose">
-    <option value="">--Select Purpose--</option>
-    <option value="url">URL</option>
-    <option value="schedule">SCHEDULE</option>
-  </select>
+  <div class="container">
+    <h1>Link Generator</h1>
+    
+    <!-- Purpose Selection -->
+    <label for="purpose">Choose the purpose of your link:</label>
+    <select id="purpose">
+      <option value="">--Select Purpose--</option>
+      <option value="url">URL</option>
+      <option value="schedule">SCHEDULE</option>
+    </select>
 
-  <!-- Agency Selection -->
-  <label for="agency" style="display:none;">Choose an agency:</label>
-  <select id="agency" style="display:none;">
-    <option value="">--Select Agency--</option>
-  </select>
+    <!-- Agency Selection -->
+    <label for="agency" style="display:none;">Choose an agency:</label>
+    <select id="agency" style="display:none;">
+      <option value="">--Select Agency--</option>
+    </select>
 
-  <!-- Lead Source Selection -->
-  <label for="leadSource" style="display:none;">Choose a lead source:</label>
-  <select id="leadSource" style="display:none;">
-    <option value="">--Select Lead Source--</option>
-  </select>
+    <!-- Lead Source Selection -->
+    <label for="leadSource" style="display:none;">Choose a lead source:</label>
+    <select id="leadSource" style="display:none;">
+      <option value="">--Select Lead Source--</option>
+    </select>
 
-  <!-- Test Checkbox -->
-  <label id="testCheckboxContainer" style="display:none;">
-    <input type="checkbox" id="testCheckbox"> TEST (check this box if you wish to use the link for testing purposes only)
-  </label>
+    <!-- Test Checkbox -->
+    <label id="testCheckboxContainer" style="display:none;">
+      <input type="checkbox" id="testCheckbox"> TEST (check this box if you wish to use the link for testing purposes only)
+    </label>
 
-  <!-- Generate Button -->
-  <button id="generateBtn" style="display:none;">Generate your link</button>
+    <!-- Generate Button -->
+    <button id="generateBtn" style="display:none;">Generate your link</button>
 
-  <!-- Output -->
-  <h3>Generated Link:</h3>
-  <p id="generatedLink"></p>
+    <!-- Output -->
+    <h3>Generated Link:</h3>
+    <p id="generatedLink"></p>
+  </div>
 
   <script>
     // Table Data
@@ -55,13 +113,13 @@
       url: {
         PMIMA: {
           CRM: { utm_source: "crm", utm_campaign: "" },
-          "CRM-AOKI": { utm_source: "crm", utm_campaign: "aoki" },
+          "CRM-AOK": { utm_source: "crm", utm_campaign: "aoki" },
           SMM: { utm_source: "social", utm_campaign: "" },
-          "SMM-AOKI": { utm_source: "social", utm_campaign: "aoki" },
+          "SMM-AOK": { utm_source: "social", utm_campaign: "aoki" },
           SMMBIO: { utm_source: "social", utm_campaign: "" },
           SMMHIGH: { utm_source: "social", utm_campaign: "" },
           WEB: { utm_source: "web", utm_campaign: "" },
-          "WEB-AOKI": { utm_source: "web", utm_campaign: "aoki" },
+          "WEB-AOK": { utm_source: "web", utm_campaign: "aoki" },
         },
         MUNCHY: {
           COIN: { utm_source: "munchy", utm_campaign: "coin_mechanic" },
@@ -175,16 +233,16 @@
 
       const baseUrl = baseUrls[purpose];
       const data = tableData[purpose][agency][leadSource];
-      let url = ${baseUrl}/?agency=${agency}&source=${leadSource};
+      let url = `${baseUrl}/?agency=${agency}&source=${leadSource}`;
 
       if (!isTest && data.utm_source) {
-        url += &utm_source=${data.utm_source};
+        url += `&utm_source=${data.utm_source}`;
       }
       if (!isTest && data.utm_campaign) {
-        url += &utm_campaign=${data.utm_campaign};
+        url += `&utm_campaign=${data.utm_campaign}`;
       }
       if (isTest) {
-        url = ${baseUrl}/?agency=${agency}&source=${leadSource}-TEST;
+        url = `${baseUrl}/?agency=${agency}&source=${leadSource}-TEST`;
       }
 
       generatedLink.textContent = url;
