@@ -68,18 +68,21 @@
       border-radius: 5px;
       word-wrap: break-word;
     }
+    #copyButton {
+      margin-top: 10px;
+      background-color: #28a745;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    
-     <!-- Add logo image -->
+    <!-- Add logo image -->
     <div style="text-align: center;">
       <img src="https://play-lh.googleusercontent.com/d7Ro00xbzx86tD8O32mK0Av-VdSUcMIQD3lZRKdtRqp9urWD-nTxk90LR70U_s2m_N4" alt="Logo" style="max-width: 200px; height: auto;">
     </div>
 
-        <h1>Link Generator</h1>
-    
+    <h1>Link Generator</h1>
+
     <!-- Purpose Selection -->
     <label for="purpose">Choose the purpose of your link:</label>
     <select id="purpose">
@@ -111,6 +114,8 @@
     <!-- Output -->
     <h3>Generated Link:</h3>
     <p id="generatedLink"></p>
+    <!-- Copy Button -->
+    <button id="copyButton" style="display:none;">Copy Link</button>
   </div>
 
   <script>
@@ -175,6 +180,7 @@
     const testCheckboxContainer = document.getElementById("testCheckboxContainer");
     const generateBtn = document.getElementById("generateBtn");
     const generatedLink = document.getElementById("generatedLink");
+    const copyButton = document.getElementById("copyButton");
 
     // Update Agency List
     purposeSelect.addEventListener("change", () => {
@@ -196,6 +202,7 @@
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
+      copyButton.style.display = "none";
     });
 
     // Update Lead Source List
@@ -218,6 +225,7 @@
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
+      copyButton.style.display = "none";
     });
 
     // Show Test Checkbox and Generate Button
@@ -254,6 +262,18 @@
       }
 
       generatedLink.textContent = url;
+      copyButton.style.display = "block"; // Show Copy button when the link is generated
+    });
+
+    // Copy Link to Clipboard
+    copyButton.addEventListener("click", () => {
+      const range = document.createRange();
+      range.selectNode(generatedLink);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+
+      alert("Link copied to clipboard!");
     });
   </script>
 </body>
