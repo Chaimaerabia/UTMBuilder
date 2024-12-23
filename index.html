@@ -3,309 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom UTM URL Builder</title>
+  <title>URL Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f9;
+      margin: 20px;
     }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .input-group {
-      margin-bottom: 20px;
-      display: none;  /* Initially hide all input groups */
-    }
-    label {
-      font-size: 16px;
-      margin-bottom: 8px;
+    label, select, button {
       display: block;
-      color: #333;
-    }
-    select, input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    select:focus, input:focus {
-      border-color: #007bff;
-      outline: none;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 18px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .output-container {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .output-container input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-    }
-    .error-message {
-      color: red;
-      font-size: 14px;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .checkbox-container {
-      margin-top: 20px;
-      text-align: center;
-      background-color: red;  /* Red background */
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .checkbox-container label {
-      font-size: 14px;
-      color: white;  /* White text */
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
+  <h1>Link Generator</h1>
+  <!-- Purpose Selection -->
+  <label for="purpose">Choose the purpose of your link:</label>
+  <select id="purpose">
+    <option value="">--Select Purpose--</option>
+    <option value="url">URL</option>
+    <option value="schedule">SCHEDULE</option>
+  </select>
 
-  <div class="container">
-    <h1>Custom UTM URL Builder</h1>
+  <!-- Agency Selection -->
+  <label for="agency" style="display:none;">Choose an agency:</label>
+  <select id="agency" style="display:none;">
+    <option value="">--Select Agency--</option>
+  </select>
 
-    <!-- Step 1: Choose Purpose of Visit -->
-    <div class="input-group" id="purpose-group" style="display:block;">
-      <label for="purpose">Choose the purpose of your visit:</label>
-      <select id="purpose" onchange="updateDropdowns()">
-        <option value="">Select Purpose</option>
-        <option value="URL">URL</option>
-        <option value="SCHEDULE">SCHEDULE</option>
-      </select>
-    </div>
+  <!-- Lead Source Selection -->
+  <label for="leadSource" style="display:none;">Choose a lead source:</label>
+  <select id="leadSource" style="display:none;">
+    <option value="">--Select Lead Source--</option>
+  </select>
 
-    <!-- Step 2: Agency Name (Initially hidden) -->
-    <div class="input-group" id="agency-group">
-      <label for="agency">Select Agency Name:</label>
-      <select id="agency">
-        <option value="PMIMA">PMIMA</option>
-        <option value="MUNCHY">MUNCHY</option>
-        <option value="GLOVO">GLOVO</option>
-        <option value="cpl_agency2">cpl_agency2</option>
-        <option value="cpl_agency4">cpl_agency4</option>
-      </select>
-    </div>
+  <!-- Test Checkbox -->
+  <label id="testCheckboxContainer" style="display:none;">
+    <input type="checkbox" id="testCheckbox"> TEST (check this box if you wish to use the link for testing purposes only)
+  </label>
 
-    <!-- Step 3: Source Name (Initially hidden) -->
-    <div class="input-group" id="source-group">
-      <label for="source">Select Lead Source:</label>
-      <select id="source">
-        <!-- The options will be dynamically populated based on the purpose selection -->
-      </select>
-    </div>
+  <!-- Generate Button -->
+  <button id="generateBtn" style="display:none;">Generate your link</button>
 
-    <!-- Step 4: Test Checkbox (Initially hidden) -->
-    <div class="checkbox-container" id="test-checkbox-container" style="display: none;">
-      <label>
-        <input type="checkbox" id="test-checkbox"> TEST (Click here if you are testing the mechanic only, if not, leave it empty)
-      </label>
-    </div>
-
-    <!-- Step 5: Generate UTM URL -->
-    <button onclick="generateUTMUrl()">Generate UTM URL</button>
-
-    <!-- Step 6: Output UTM URL -->
-    <div class="output-container">
-      <h3>Generated UTM URL:</h3>
-      <input type="text" id="utm-url" readonly placeholder="Your UTM URL will appear here">
-      <div id="error-message" class="error-message"></div>
-    </div>
-  </div>
+  <!-- Output -->
+  <h3>Generated Link:</h3>
+  <p id="generatedLink"></p>
 
   <script>
-    // Function to update dropdown visibility based on purpose selection
-    function updateDropdowns() {
-      var purpose = document.getElementById("purpose").value;
+    // Table Data
+    const tableData = {
+      url: {
+        PMIMA: {
+          CRM: { utm_source: "crm", utm_campaign: "" },
+          "CRM-AOKI": { utm_source: "crm", utm_campaign: "aoki" },
+          SMM: { utm_source: "social", utm_campaign: "" },
+          "SMM-AOKI": { utm_source: "social", utm_campaign: "aoki" },
+          SMMBIO: { utm_source: "social", utm_campaign: "" },
+          SMMHIGH: { utm_source: "social", utm_campaign: "" },
+          WEB: { utm_source: "web", utm_campaign: "" },
+          "WEB-AOKI": { utm_source: "web", utm_campaign: "aoki" },
+        },
+        MUNCHY: {
+          COIN: { utm_source: "munchy", utm_campaign: "coin_mechanic" },
+        },
+        GLOVO: {
+          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },
+          CRM: { utm_source: "crm", utm_campaign: "avito" },
+          ADS_IAB: { utm_source: "ads_iab", utm_campaign: "avito" },
+        },
+        cpl_agency4: {
+          SHOP: { utm_source: "shop", utm_campaign: "avito" },
+        },
+      },
+      schedule: {
+        PMIMA: {
+          CSC: {},
+          MGM: {},
+          DCE2: {},
+        },
+        GLOVO: {
+          ORGANIC: {},
+          GLOVO: {},
+          SHOP_WSP: {},
+          SHOP_CALL: {},
+        },
+        cpl_agency2: {
+          SCHEDULE: {},
+        },
+        cpl_agency4: {
+          SCHEDULE: {},
+        },
+      },
+    };
 
-      // Show the agency and source dropdowns if a valid purpose is selected
+    const baseUrls = {
+      url: "https://iqostest.com",
+      schedule: "https://iqostest.com/schedule",
+    };
+
+    // DOM Elements
+    const purposeSelect = document.getElementById("purpose");
+    const agencySelect = document.getElementById("agency");
+    const leadSourceSelect = document.getElementById("leadSource");
+    const testCheckbox = document.getElementById("testCheckbox");
+    const testCheckboxContainer = document.getElementById("testCheckboxContainer");
+    const generateBtn = document.getElementById("generateBtn");
+    const generatedLink = document.getElementById("generatedLink");
+
+    // Update Agency List
+    purposeSelect.addEventListener("change", () => {
+      const purpose = purposeSelect.value;
+      agencySelect.style.display = purpose ? "block" : "none";
+      agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
+
       if (purpose) {
-        document.getElementById("agency-group").style.display = "block";
-        document.getElementById("source-group").style.display = "block";
-        document.getElementById("test-checkbox-container").style.display = "block";  // Show the TEST checkbox
-        updateSourceOptions(purpose); // Update source options based on the selected purpose
+        const agencies = Object.keys(tableData[purpose]);
+        agencies.forEach(agency => {
+          const option = document.createElement("option");
+          option.value = agency;
+          option.textContent = agency;
+          agencySelect.appendChild(option);
+        });
+      }
+
+      leadSourceSelect.style.display = "none";
+      testCheckboxContainer.style.display = "none";
+      generateBtn.style.display = "none";
+      generatedLink.textContent = "";
+    });
+
+    // Update Lead Source List
+    agencySelect.addEventListener("change", () => {
+      const purpose = purposeSelect.value;
+      const agency = agencySelect.value;
+      leadSourceSelect.style.display = agency ? "block" : "none";
+      leadSourceSelect.innerHTML = '<option value="">--Select Lead Source--</option>';
+
+      if (agency) {
+        const leadSources = Object.keys(tableData[purpose][agency]);
+        leadSources.forEach(source => {
+          const option = document.createElement("option");
+          option.value = source;
+          option.textContent = source;
+          leadSourceSelect.appendChild(option);
+        });
+      }
+
+      testCheckboxContainer.style.display = "none";
+      generateBtn.style.display = "none";
+      generatedLink.textContent = "";
+    });
+
+    // Show Test Checkbox and Generate Button
+    leadSourceSelect.addEventListener("change", () => {
+      const leadSource = leadSourceSelect.value;
+      if (leadSource) {
+        testCheckboxContainer.style.display = "block";
+        generateBtn.style.display = "block";
       } else {
-        document.getElementById("agency-group").style.display = "none";
-        document.getElementById("source-group").style.display = "none";
-        document.getElementById("test-checkbox-container").style.display = "none";  // Hide the TEST checkbox
+        testCheckboxContainer.style.display = "none";
+        generateBtn.style.display = "none";
       }
-    }
+    });
 
-    // Function to update the source options based on the selected purpose
-    function updateSourceOptions(purpose) {
-      var sourceSelect = document.getElementById("source");
+    // Generate URL
+    generateBtn.addEventListener("click", () => {
+      const purpose = purposeSelect.value;
+      const agency = agencySelect.value;
+      const leadSource = leadSourceSelect.value;
+      const isTest = testCheckbox.checked;
 
-      // Clear the current source options
-      sourceSelect.innerHTML = "";
+      const baseUrl = baseUrls[purpose];
+      const data = tableData[purpose][agency][leadSource];
+      let url = ${baseUrl}/?agency=${agency}&source=${leadSource};
 
-      if (purpose === "URL") {
-        // URL purpose sources
-        var sources = {
-          PMIMA: ["CRM", "CRM-AOKI-TEASER", "SMM", "SMM-AOKI-TEASER", "SMMBIO", "SMMHIGH", "WEB", "WEB-AOKI", "WEB-AOKI-TEASER"],
-          MUNCHY: ["COIN"],
-          GLOVO: ["COIN"],
-          cpl_agency4: ["CRM", "ADS_IAB", "SHOP", "GLOVO"],
-          cpl_agency2: ["GLOVO"]
-        };
-
-        // Get the selected agency
-        var agency = document.getElementById("agency").value;
-
-        // Add source options based on selected agency
-        if (sources[agency]) {
-          sources[agency].forEach(function(source) {
-            var option = document.createElement("option");
-            option.value = source;
-            option.textContent = source;
-            sourceSelect.appendChild(option);
-          });
-        }
-      } else if (purpose === "SCHEDULE") {
-        // SCHEDULE purpose sources
-        var scheduleSources = {
-          PMIMA: ["CSC", "MGM", "DCE2"],
-          GLOVO: ["ORGANIC"],
-          cpl_agency2: ["GLOVO", "SCHEDULE"],
-          cpl_agency4: ["GLOVO", "SHOP_WSP", "SHOP_CALL", "SCHEDULE"]
-        };
-
-        // Get the selected agency
-        var agency = document.getElementById("agency").value;
-
-        // Add source options based on selected agency
-        if (scheduleSources[agency]) {
-          scheduleSources[agency].forEach(function(source) {
-            var option = document.createElement("option");
-            option.value = source;
-            option.textContent = source;
-            sourceSelect.appendChild(option);
-          });
-        }
+      if (!isTest && data.utm_source) {
+        url += &utm_source=${data.utm_source};
       }
-    }
-
-    // Function to generate UTM URL
-    function generateUTMUrl() {
-      document.getElementById("error-message").textContent = "";  // Clear previous error message
-
-      var purpose = document.getElementById("purpose").value;
-      var agency = document.getElementById("agency").value;
-      var source = document.getElementById("source").value;
-      var testChecked = document.getElementById("test-checkbox").checked;
-
-      // Validate that source is selected
-      if (!source) {
-        document.getElementById("error-message").textContent = "Please select a lead source.";
-        return;
+      if (!isTest && data.utm_campaign) {
+        url += &utm_campaign=${data.utm_campaign};
+      }
+      if (isTest) {
+        url = ${baseUrl}/?agency=${agency}&source=${leadSource}-TEST;
       }
 
-      var baseUrl = (purpose === "SCHEDULE") ? "https://iqostest.com/schedule?" : "https://iqostest.com/?";
-      var utm_source = "";
-      var utm_campaign = "";
-
-      // Define source and campaign based on the selected source
-      if (purpose === "URL") {
-        switch (source) {
-          case "CRM":
-            utm_source = "crm";
-            utm_campaign = "crm";
-            break;
-          case "CRM-AOKI-TEASER":
-            utm_source = "crm";
-            utm_campaign = "aoki";
-            break;
-          case "SMM":
-            utm_source = "social";
-            utm_campaign = "social";
-            break;
-          case "SMM-AOKI-TEASER":
-            utm_source = "social";
-            utm_campaign = "aoki";
-            break;
-          case "SMMBIO":
-            utm_source = "social";
-            utm_campaign = "social";
-            break;
-          case "SMMHIGH":
-            utm_source = "social";
-            utm_campaign = "social";
-            break;
-          case "WEB":
-            utm_source = "web";
-            utm_campaign = "web";
-            break;
-          case "WEB-AOKI":
-            utm_source = "web";
-            utm_campaign = "aoki";
-            break;
-          case "WEB-AOKI-TEASER":
-            utm_source = "web";
-            utm_campaign = "aoki";
-            break;
-          case "COIN":
-            utm_source = "munchy";
-            utm_campaign = "coin_mechanic";
-            break;
-          case "ADS_IAB":
-            utm_source = "ads_iab";
-            utm_campaign = "avito";
-            break;
-          case "SHOP":
-            utm_source = "shop";
-            utm_campaign = "avito";
-            break;
-          default:
-            break;
-        }
-      }
-
-      // Add -TEST to lead source and campaign if test is checked
-      if (testChecked) {
-        source += "-TEST";
-        utm_source += "-TEST";
-        utm_campaign += "-TEST";
-      }
-
-      // Build the final URL
-      var finalUrl = baseUrl + "agency=" + agency + "&source=" + source;
-      
-      if (purpose === "URL") {
-        finalUrl += "&utm_source=" + utm_source + "&utm_campaign=" + utm_campaign;
-      }
-
-      // Output the final URL to the input field
-      document.getElementById("utm-url").value = finalUrl;
-    }
+      generatedLink.textContent = url;
+    });
   </script>
 </body>
 </html>
