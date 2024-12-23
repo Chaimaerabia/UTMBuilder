@@ -1,11 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    label, select, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 1.1em;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, button {
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #testCheckboxContainer {
+      display: none;
+      margin-top: 20px;
+      background-color: #ffebeb;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    #testCheckbox {
+      margin-right: 10px;
+      accent-color: red;
+    }
+    #generatedLink {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #eef;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
 <body>
   <div class="container">
-    <h1>Link Generator</h1>
     
-    <!-- Add logo image -->
+     <!-- Add logo image -->
     <div style="text-align: center;">
-      <img src="https://play-lh.googleusercontent.com/d7Ro00xbzx86tD8O32mK0Av-VdSUcMIQD3lZRKdtRqp9urWD-nTxk90LR70U_s2m_N4" alt="Logo" style="max-width: 100px; height: auto;">
+      <img src="https://play-lh.googleusercontent.com/d7Ro00xbzx86tD8O32mK0Av-VdSUcMIQD3lZRKdtRqp9urWD-nTxk90LR70U_s2m_N4" alt="Logo" style="max-width: 200px; height: auto;">
     </div>
+
+        <h1>Link Generator</h1>
     
     <!-- Purpose Selection -->
     <label for="purpose">Choose the purpose of your link:</label>
@@ -38,13 +111,10 @@
     <!-- Output -->
     <h3>Generated Link:</h3>
     <p id="generatedLink"></p>
-
-    <!-- Copy Button (Initially Hidden) -->
-    <button id="copyBtn" style="display:none;" onclick="copyLink()">Copy Link</button>
   </div>
 
   <script>
-    // Table Data (same as before)
+    // Table Data
     const tableData = {
       url: {
         PMIMA: {
@@ -105,7 +175,6 @@
     const testCheckboxContainer = document.getElementById("testCheckboxContainer");
     const generateBtn = document.getElementById("generateBtn");
     const generatedLink = document.getElementById("generatedLink");
-    const copyBtn = document.getElementById("copyBtn");
 
     // Update Agency List
     purposeSelect.addEventListener("change", () => {
@@ -127,7 +196,6 @@
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
-      copyBtn.style.display = "none"; // Hide copy button
     });
 
     // Update Lead Source List
@@ -150,7 +218,6 @@
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
-      copyBtn.style.display = "none"; // Hide copy button
     });
 
     // Show Test Checkbox and Generate Button
@@ -187,18 +254,7 @@
       }
 
       generatedLink.textContent = url;
-      copyBtn.style.display = "inline-block"; // Show copy button once the URL is generated
     });
-
-    // Function to copy the link to clipboard
-    function copyLink() {
-      const urlText = generatedLink.textContent;
-      navigator.clipboard.writeText(urlText).then(() => {
-        alert("Link copied to clipboard!");
-      }).catch((err) => {
-        alert("Failed to copy the link: " + err);
-      });
-    }
   </script>
 </body>
-
+</html>
