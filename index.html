@@ -146,6 +146,9 @@
         cpl_agency6: {
           MANUAL: { utm_source: "manual", utm_campaign: "manual" },
         },
+        cpl_agency5: {
+          MANUAL: { utm_source: "manual", utm_campaign: "manual" },
+        },
       },
       schedule: {
         PMITN: {
@@ -257,7 +260,7 @@
       leadSourceSelect.style.display = agency ? "block" : "none";
       leadSourceSelect.innerHTML = '<option value="">--Select Lead Source--</option>';
 
-      if (agency && agency !== "cpl_agency6") {
+      if (agency && agency !== "cpl_agency6" && agency !== "cpl_agency5") {
         const purpose = purposeSelect.value;
         const leadSources = Object.keys(tableData[purpose][agency]);
         leadSources.forEach(source => {
@@ -268,7 +271,7 @@
         });
       }
 
-      if (agency === "cpl_agency6") {
+      if (agency === "cpl_agency6" || agency === "cpl_agency5") {
         manualSourceLabel.style.display = "block";
         manualSourceInput.style.display = "block";
         leadSourceSelect.style.display = "none";
