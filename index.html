@@ -285,4 +285,29 @@
       const baseUrl = baseUrls[country][purpose];
       let url = `${baseUrl}/?agency=${agency}`;
 
-      // If a manual source is provided,
+      // If a manual source is provided, use that
+      if (manualSource) {
+        url += `&source=${manualSource}&utm_source=${manualSource}&utm_campaign=${manualSource}`;
+      } else {
+        // Otherwise, fetch from predefined table data
+        const source = leadSourceSelect.value;
+        url += `&source=${source}&utm_source=${source}&utm_campaign=${source}`;
+      }
+
+      if (isTest) {
+        url += "&test=true";
+      }
+
+      generatedLink.textContent = url;
+      copyButton.style.display = "inline-block";
+    });
+
+    // Copy URL to Clipboard
+    copyButton.addEventListener("click", () => {
+      navigator.clipboard.writeText(generatedLink.textContent).then(() => {
+        alert("Link copied to clipboard!");
+      });
+    });
+  </script>
+</body>
+</html>
