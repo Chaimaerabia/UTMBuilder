@@ -160,6 +160,9 @@
         cpl_agency6: {
           SCHEDULE: {},
         },
+        PMIMA: {
+          SCHEDULE: {},
+        },
       },
     };
 
@@ -215,7 +218,22 @@
 
       if (purpose) {
         const country = countrySelect.value;
-        const agencies = Object.keys(tableData[purpose]);
+        let agencies = [];
+
+        if (country === "tunisia") {
+          if (purpose === "url") {
+            agencies = ["PMITN", "GLOVO", "cpl_agency5"];
+          } else if (purpose === "schedule") {
+            agencies = ["cpl_agency5", "PMITN"];
+          }
+        } else if (country === "morocco") {
+          if (purpose === "url") {
+            agencies = ["PMIMA", "GLOVO", "cpl_agency6"];
+          } else if (purpose === "schedule") {
+            agencies = ["cpl_agency6", "PMIMA"];
+          }
+        }
+
         agencies.forEach(agency => {
           const option = document.createElement("option");
           option.value = agency;
