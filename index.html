@@ -141,7 +141,7 @@
           "WEB-AOKI": { utm_source: "web", utm_campaign: "aoki" },
         },
         GLOVO: {
-          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },          
+          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },
         },
         cpl_agency6: {
           MANUAL: { utm_source: "manual", utm_campaign: "manual" },
@@ -277,22 +277,10 @@
         leadSourceSelect.style.display = "none";
       }
 
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
+      testCheckboxContainer.style.display = "block";
+      generateBtn.style.display = "block";
       generatedLink.textContent = "";
       copyButton.style.display = "none";
-    });
-
-    // Show Test Checkbox and Generate Button
-    leadSourceSelect.addEventListener("change", () => {
-      const leadSource = leadSourceSelect.value;
-      if (leadSource || manualSourceInput.value) {
-        testCheckboxContainer.style.display = "block";
-        generateBtn.style.display = "block";
-      } else {
-        testCheckboxContainer.style.display = "none";
-        generateBtn.style.display = "none";
-      }
     });
 
     // Generate URL
