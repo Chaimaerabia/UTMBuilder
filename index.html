@@ -23,7 +23,7 @@
       text-align: center;
       color: #333;
     }
-    label, select, button {
+    label, select, input, button {
       display: block;
       width: 100%;
       margin: 10px 0;
@@ -35,7 +35,7 @@
     label {
       font-weight: bold;
     }
-    select, button {
+    select, input, button {
       background-color: #f9f9f9;
       color: #333;
     }
@@ -105,11 +105,9 @@
       <option value="">--Select Agency--</option>
     </select>
 
-    <!-- Lead Source Selection -->
-    <label for="leadSource" style="display:none;">Choose a lead source:</label>
-    <select id="leadSource" style="display:none;">
-      <option value="">--Select Lead Source--</option>
-    </select>
+    <!-- Manual Source Input -->
+    <label for="manualSource" style="display:none;">Enter Lead Source (in capital letters):</label>
+    <input type="text" id="manualSource" style="display:none;" placeholder="Enter source">
 
     <!-- Test Checkbox -->
     <label id="testCheckboxContainer" style="display:none;">
@@ -176,7 +174,7 @@
     const countrySelect = document.getElementById("country");
     const purposeSelect = document.getElementById("purpose");
     const agencySelect = document.getElementById("agency");
-    const leadSourceSelect = document.getElementById("leadSource");
+    const manualSourceInput = document.getElementById("manualSource");
     const testCheckbox = document.getElementById("testCheckbox");
     const testCheckboxContainer = document.getElementById("testCheckboxContainer");
     const generateBtn = document.getElementById("generateBtn");
@@ -194,7 +192,7 @@
       }
 
       agencySelect.style.display = "none";
-      leadSourceSelect.style.display = "none";
+      manualSourceInput.style.display = "none";
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
@@ -218,29 +216,21 @@
         });
       }
 
-      leadSourceSelect.style.display = "none";
+      manualSourceInput.style.display = "none";
       testCheckboxContainer.style.display = "none";
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
       copyButton.style.display = "none";
     });
 
-    // Update Lead Source List
+    // Show Manual Source Input
     agencySelect.addEventListener("change", () => {
       const purpose = purposeSelect.value;
       const agency = agencySelect.value;
-      leadSourceSelect.style.display = agency ? "block" : "none";
-      leadSourceSelect.innerHTML = '<option value="">--Select Lead Source--</option>';
-
-      if (agency) {
-        const country = countrySelect.value;
-        const leadSources = Object.keys(tableData[purpose][agency]);
-        leadSources.forEach(source => {
-          const option = document.createElement("option");
-          option.value = source;
-          option.textContent = source;
-          leadSourceSelect.appendChild(option);
-        });
+      if (agency === "cpl_agency6") {
+        manualSourceInput.style.display = "block";
+      } else {
+        manualSourceInput.style.display = "none";
       }
 
       testCheckboxContainer.style.display = "none";
@@ -250,9 +240,8 @@
     });
 
     // Show Test Checkbox and Generate Button
-    leadSourceSelect.addEventListener("change", () => {
-      const leadSource = leadSourceSelect.value;
-      if (leadSource) {
+    manualSourceInput.addEventListener("input", () => {
+      if (manualSourceInput.value) {
         testCheckboxContainer.style.display = "block";
         generateBtn.style.display = "block";
       } else {
@@ -266,21 +255,22 @@
       const country = countrySelect.value;
       const purpose = purposeSelect.value;
       const agency = agencySelect.value;
-      const leadSource = leadSourceSelect.value;
+      const manualSource = manualSourceInput.value.trim().toUpperCase();  // Convert to uppercase
       const isTest = testCheckbox.checked;
 
       const baseUrl = baseUrls[country][purpose];
-      const data = tableData[purpose][agency][leadSource];
-      let url = `${baseUrl}/?agency=${agency}&source=${leadSource}`;
+      const data = tableData[purpose][agency][manualSource ? "MANUAL" : ""];
 
-      if (!isTest && data.utm_source) {
+      let url = `${baseUrl}/?agency=${agency}&source=${manualSource}`;
+
+      if (!isTest && data && data.utm_source) {
         url += `&utm_source=${data.utm_source}`;
       }
-      if (!isTest && data.utm_campaign) {
+      if (!isTest && data && data.utm_campaign) {
         url += `&utm_campaign=${data.utm_campaign}`;
       }
       if (isTest) {
-        url = `${baseUrl}/?agency=${agency}&source=${leadSource}-TEST`;
+        url = `${baseUrl}/?agency=${agency}&source=${manualSource}-TEST`;
       }
 
       generatedLink.textContent = url;
