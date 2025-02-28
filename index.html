@@ -83,9 +83,17 @@
 
     <h1>Link Generator</h1>
 
+    <!-- Country Selection -->
+    <label for="country">Choose a country:</label>
+    <select id="country">
+      <option value="">--Select Country--</option>
+      <option value="morocco">Morocco</option>
+      <option value="tunisia">Tunisia</option>
+    </select>
+
     <!-- Purpose Selection -->
     <label for="purpose">Choose the purpose of your link:</label>
-    <select id="purpose">
+    <select id="purpose" disabled>
       <option value="">--Select Purpose--</option>
       <option value="url">URL</option>
       <option value="schedule">SCHEDULE</option>
@@ -171,12 +179,20 @@
       },
     };
 
+    // Base URLs
     const baseUrls = {
-      url: "https://iqostest.com",
-      schedule: "https://iqostest.com/schedule",
+      morocco: {
+        url: "https://iqostest.com",
+        schedule: "https://iqostest.com/schedule",
+      },
+      tunisia: {
+        url: "https://iqostest.com/tn",
+        schedule: "https://iqostest.com/tn/schedule",
+      },
     };
 
     // DOM Elements
+    const countrySelect = document.getElementById("country");
     const purposeSelect = document.getElementById("purpose");
     const agencySelect = document.getElementById("agency");
     const leadSourceSelect = document.getElementById("leadSource");
@@ -186,6 +202,24 @@
     const generatedLink = document.getElementById("generatedLink");
     const copyButton = document.getElementById("copyButton");
 
+    // Country Selection Event
+    countrySelect.addEventListener("change", () => {
+      const country = countrySelect.value;
+
+      if (country) {
+        purposeSelect.disabled = false;
+      } else {
+        purposeSelect.disabled = true;
+      }
+
+      agencySelect.style.display = "none";
+      leadSourceSelect.style.display = "none";
+      testCheckboxContainer.style.display = "none";
+      generateBtn.style.display = "none";
+      generatedLink.textContent = "";
+      copyButton.style.display = "none";
+    });
+
     // Update Agency List
     purposeSelect.addEventListener("change", () => {
       const purpose = purposeSelect.value;
@@ -193,6 +227,7 @@
       agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
 
       if (purpose) {
+        const country = countrySelect.value;
         const agencies = Object.keys(tableData[purpose]);
         agencies.forEach(agency => {
           const option = document.createElement("option");
@@ -217,6 +252,7 @@
       leadSourceSelect.innerHTML = '<option value="">--Select Lead Source--</option>';
 
       if (agency) {
+        const country = countrySelect.value;
         const leadSources = Object.keys(tableData[purpose][agency]);
         leadSources.forEach(source => {
           const option = document.createElement("option");
@@ -246,12 +282,13 @@
 
     // Generate URL
     generateBtn.addEventListener("click", () => {
+      const country = countrySelect.value;
       const purpose = purposeSelect.value;
       const agency = agencySelect.value;
       const leadSource = leadSourceSelect.value;
       const isTest = testCheckbox.checked;
 
-      const baseUrl = baseUrls[purpose];
+      const baseUrl = baseUrls[country][purpose];
       const data = tableData[purpose][agency][leadSource];
       let url = `${baseUrl}/?agency=${agency}&source=${leadSource}`;
 
