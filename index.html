@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL Generator</title>
   <style>
+    /* Styling for the page */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -23,7 +24,7 @@
       text-align: center;
       color: #333;
     }
-    label, select, input, button {
+    label, select, button, input {
       display: block;
       width: 100%;
       margin: 10px 0;
@@ -35,7 +36,7 @@
     label {
       font-weight: bold;
     }
-    select, input, button {
+    select, button {
       background-color: #f9f9f9;
       color: #333;
     }
@@ -48,17 +49,6 @@
     }
     button:hover {
       background-color: #0056b3;
-    }
-    #testCheckboxContainer {
-      display: none;
-      margin-top: 20px;
-      background-color: #ffebeb;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    #testCheckbox {
-      margin-right: 10px;
-      accent-color: red;
     }
     #generatedLink {
       margin-top: 20px;
@@ -76,13 +66,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Add logo image -->
-    <div style="text-align: center;">
-      <img src="https://play-lh.googleusercontent.com/d7Ro00xbzx86tD8O32mK0Av-VdSUcMIQD3lZRKdtRqp9urWD-nTxk90LR70U_s2m_N4" alt="Logo" style="max-width: 200px; height: auto;">
-    </div>
-
     <h1>Link Generator</h1>
-
     <!-- Country Selection -->
     <label for="country">Choose a country:</label>
     <select id="country">
@@ -105,14 +89,9 @@
       <option value="">--Select Agency--</option>
     </select>
 
-    <!-- Manual Source Input -->
-    <label for="manualSource" style="display:none;">Enter Lead Source (in capital letters):</label>
-    <input type="text" id="manualSource" style="display:none;" placeholder="Enter source">
-
-    <!-- Test Checkbox -->
-    <label id="testCheckboxContainer" style="display:none;">
-      <input type="checkbox" id="testCheckbox"> TEST (check this box if you wish to use the link for testing purposes only)
-    </label>
+    <!-- Source Manual Input -->
+    <label for="sourceInput" id="sourceLabel" style="display:none;">Enter source:</label>
+    <input type="text" id="sourceInput" style="display:none;" placeholder="Enter Source (CAPITAL LETTERS ONLY)" />
 
     <!-- Generate Button -->
     <button id="generateBtn" style="display:none;">Generate your link</button>
@@ -125,175 +104,132 @@
   </div>
 
   <script>
-    // Table Data
-    const tableData = {
-      url: {
-        PMITN: {
-          CSC: { utm_source: "csc", utm_campaign: "" },
-        },
-        GLOVO: {
-          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },
-        },
-        cpl_agency6: {
-          MANUAL: { utm_source: "manual_input", utm_campaign: "" },
-        },
-      },
-      schedule: {
-        PMITN: {
-          CSC: {},
-        },
-        cpl_agency5: {
-          SCHEDULE: {},
-        },
-        cpl_agency6: {
-          SCHEDULE: {},
-        },
-      },
-    };
-
-    // Base URLs
+    // Base URLs for both countries
     const baseUrls = {
       morocco: {
         url: "https://iqostest.com",
-        schedule: "https://iqostest.com/schedule",
+        schedule: "https://iqostest.com/schedule"
       },
       tunisia: {
         url: "https://iqostest.com/tn",
-        schedule: "https://iqostest.com/tn/schedule",
+        schedule: "https://iqostest.com/tn/schedule"
+      }
+    };
+
+    // Agency Data for URL and Schedule
+    const agenciesData = {
+      morocco: {
+        url: ["PMIMA", "GLOVO", "cpl_agency6"],
+        schedule: ["GLOVO", "PMIMA", "cpl_agency6"]
       },
+      tunisia: {
+        url: ["PMITN", "GLOVO", "cpl_agency5"],
+        schedule: ["PMITN", "GLOVO", "cpl_agency5"]
+      }
     };
 
     // DOM Elements
     const countrySelect = document.getElementById("country");
     const purposeSelect = document.getElementById("purpose");
     const agencySelect = document.getElementById("agency");
-    const manualSourceInput = document.getElementById("manualSource");
-    const testCheckbox = document.getElementById("testCheckbox");
-    const testCheckboxContainer = document.getElementById("testCheckboxContainer");
+    const sourceInput = document.getElementById("sourceInput");
     const generateBtn = document.getElementById("generateBtn");
     const generatedLink = document.getElementById("generatedLink");
     const copyButton = document.getElementById("copyButton");
 
-    // Country Selection Event
+    // Country selection event
     countrySelect.addEventListener("change", () => {
       const country = countrySelect.value;
 
+      // Reset all fields
+      purposeSelect.disabled = false;
+      agencySelect.style.display = "none";
+      sourceInput.style.display = "none";
+      sourceInput.value = "";
+      generateBtn.style.display = "none";
+      generatedLink.textContent = "";
+      copyButton.style.display = "none";
+
       if (country) {
-        purposeSelect.disabled = false;
+        const agencies = agenciesData[country].url; // Initially load URL agencies
+        agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
+
+        agencies.forEach(agency => {
+          const option = document.createElement("option");
+          option.value = agency;
+          option.textContent = agency;
+          agencySelect.appendChild(option);
+        });
+
+        agencySelect.style.display = "block";
       } else {
         purposeSelect.disabled = true;
       }
-
-      agencySelect.style.display = "none";
-      manualSourceInput.style.display = "none";
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
-
-      // Update agency options based on country
-      updateAgencyOptions();
     });
 
-    // Update Agency List
+    // Purpose selection event
     purposeSelect.addEventListener("change", () => {
+      const country = countrySelect.value;
       const purpose = purposeSelect.value;
-      agencySelect.style.display = purpose ? "block" : "none";
-      agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
 
-      if (purpose) {
-        const country = countrySelect.value;
-        const agencies = Object.keys(tableData[purpose]);
+      // Reset fields
+      sourceInput.style.display = "none";
+      generateBtn.style.display = "none";
+      generatedLink.textContent = "";
+      copyButton.style.display = "none";
+
+      if (country && purpose) {
+        agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
+        const agencies = agenciesData[country][purpose];
         agencies.forEach(agency => {
-          // For Morocco, include cpl_agency6 only
-          if (country === "morocco" || (country === "tunisia" && agency !== "cpl_agency6")) {
-            const option = document.createElement("option");
-            option.value = agency;
-            option.textContent = agency;
-            agencySelect.appendChild(option);
-          }
+          const option = document.createElement("option");
+          option.value = agency;
+          option.textContent = agency;
+          agencySelect.appendChild(option);
         });
+        agencySelect.style.display = "block";
       }
-
-      manualSourceInput.style.display = "none";
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
     });
 
-    // Show Manual Source Input
+    // Agency selection event
     agencySelect.addEventListener("change", () => {
-      const purpose = purposeSelect.value;
       const agency = agencySelect.value;
-      
-      if (agency === "cpl_agency6") {
-        manualSourceInput.style.display = "block";
+      if (agency === "cpl_agency5" || agency === "cpl_agency6") {
+        sourceInput.style.display = "block";
       } else {
-        manualSourceInput.style.display = "none";
+        sourceInput.style.display = "none";
       }
 
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
+      generateBtn.style.display = "block";
     });
 
-    // Show Test Checkbox and Generate Button
-    manualSourceInput.addEventListener("input", () => {
-      if (manualSourceInput.value) {
-        testCheckboxContainer.style.display = "block";
-        generateBtn.style.display = "block";
-      } else {
-        testCheckboxContainer.style.display = "none";
-        generateBtn.style.display = "none";
-      }
-    });
-
-    // Generate URL
+    // Generate link event
     generateBtn.addEventListener("click", () => {
       const country = countrySelect.value;
       const purpose = purposeSelect.value;
       const agency = agencySelect.value;
-      const manualSource = manualSourceInput.value.trim().toUpperCase();  // Convert to uppercase
-      const isTest = testCheckbox.checked;
+      const source = sourceInput.value.toUpperCase().trim(); // Capitalized source
+
+      if (!source && (agency === "cpl_agency5" || agency === "cpl_agency6")) {
+        alert("Please enter a source!");
+        return;
+      }
 
       const baseUrl = baseUrls[country][purpose];
-      let url = `${baseUrl}/?agency=${agency}&source=${manualSource}`;
-
-      // If `cpl_agency6`, set utm_source to be the same as the manual source
-      if (manualSource) {
-        url += `&utm_source=${manualSource}`;
-      }
-
-      if (isTest) {
-        url = `${baseUrl}/?agency=${agency}&source=${manualSource}-TEST`;
-      }
-
+      const url = `${baseUrl}/?agency=${agency}&source=${source}`;
       generatedLink.textContent = url;
-      copyButton.style.display = "block"; // Show Copy button when the link is generated
+      copyButton.style.display = "block";
     });
 
-    // Copy Link to Clipboard
+    // Copy to clipboard event
     copyButton.addEventListener("click", () => {
       const range = document.createRange();
       range.selectNode(generatedLink);
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(range);
       document.execCommand("copy");
-
       alert("Link copied to clipboard!");
     });
-
-    // Function to update the agency options based on the selected country
-    function updateAgencyOptions() {
-      const country = countrySelect.value;
-      if (country) {
-        purposeSelect.disabled = false;
-      } else {
-        purposeSelect.disabled = true;
-      }
-    }
   </script>
 </body>
 </html>
