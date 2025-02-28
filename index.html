@@ -128,18 +128,11 @@
     // Table Data
     const tableData = {
       url: {
-        PMIMA: {
-          CRM: { utm_source: "crm", utm_campaign: "" },
-          "CRM-AOKI": { utm_source: "crm", utm_campaign: "aoki" },
-          SMM: { utm_source: "social", utm_campaign: "" },
-          "SMM-AOKI": { utm_source: "social", utm_campaign: "aoki" },
-          SMMBIO: { utm_source: "social", utm_campaign: "" },
-          SMMHIGH: { utm_source: "social", utm_campaign: "" },
-          WEB: { utm_source: "web", utm_campaign: "" },
-          "WEB-AOKI": { utm_source: "web", utm_campaign: "aoki" },
+        PMITN: {
+          CSC: { utm_source: "csc", utm_campaign: "" },
         },
         GLOVO: {
-          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },          
+          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },
         },
         cpl_agency6: {
           MANUAL: { utm_source: "manual_input", utm_campaign: "" },
@@ -197,6 +190,9 @@
       generateBtn.style.display = "none";
       generatedLink.textContent = "";
       copyButton.style.display = "none";
+
+      // Update agency options based on country
+      updateAgencyOptions();
     });
 
     // Update Agency List
@@ -209,10 +205,13 @@
         const country = countrySelect.value;
         const agencies = Object.keys(tableData[purpose]);
         agencies.forEach(agency => {
-          const option = document.createElement("option");
-          option.value = agency;
-          option.textContent = agency;
-          agencySelect.appendChild(option);
+          // For Morocco, include cpl_agency6 only
+          if (country === "morocco" || (country === "tunisia" && agency !== "cpl_agency6")) {
+            const option = document.createElement("option");
+            option.value = agency;
+            option.textContent = agency;
+            agencySelect.appendChild(option);
+          }
         });
       }
 
@@ -227,6 +226,7 @@
     agencySelect.addEventListener("change", () => {
       const purpose = purposeSelect.value;
       const agency = agencySelect.value;
+      
       if (agency === "cpl_agency6") {
         manualSourceInput.style.display = "block";
       } else {
@@ -259,16 +259,13 @@
       const isTest = testCheckbox.checked;
 
       const baseUrl = baseUrls[country][purpose];
-      const data = tableData[purpose][agency][manualSource ? "MANUAL" : ""];
-
       let url = `${baseUrl}/?agency=${agency}&source=${manualSource}`;
 
-      if (!isTest && data && data.utm_source) {
-        url += `&utm_source=${data.utm_source}`;
+      // If `cpl_agency6`, set utm_source to be the same as the manual source
+      if (manualSource) {
+        url += `&utm_source=${manualSource}`;
       }
-      if (!isTest && data && data.utm_campaign) {
-        url += `&utm_campaign=${data.utm_campaign}`;
-      }
+
       if (isTest) {
         url = `${baseUrl}/?agency=${agency}&source=${manualSource}-TEST`;
       }
@@ -287,6 +284,16 @@
 
       alert("Link copied to clipboard!");
     });
+
+    // Function to update the agency options based on the selected country
+    function updateAgencyOptions() {
+      const country = countrySelect.value;
+      if (country) {
+        purposeSelect.disabled = false;
+      } else {
+        purposeSelect.disabled = true;
+      }
+    }
   </script>
 </body>
 </html>
