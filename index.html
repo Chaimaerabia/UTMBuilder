@@ -195,7 +195,7 @@
       const country = countrySelect.value;
       const agency = agencySelect.value;
       const type = document.getElementById("type").value;
-      const source = document.getElementById("source").value;
+      let source = document.getElementById("source").value;
       const campaign = campaignInput.value.trim().toUpperCase().replace(/\s+/g, "");
       const ageGate = document.getElementById("ageGate").checked;
 
@@ -203,15 +203,17 @@
         alert("Please fill in all required fields.");
         return;
       }
+
       // Replace SOCIAL with SMM
       if (source === "SOCIAL") {
         source = "SMM";
       }
-      // Start base link
+
+      // Base URL
       let url = "https://iqostest.com/new/";
       url += ageGate ? "?sag=0" : "?";
 
-      // Compute source value
+      // Compute source modifier if campaign exists
       let finalSource = source;
       if (campaign && campaign.length >= 2) {
         finalSource = `${source}-${campaign.slice(0, 2)}`;
