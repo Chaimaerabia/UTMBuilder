@@ -7,9 +7,9 @@
   <style>
     :root {
       --iqos-blue: #002f6c;
-      --iqos-teal: #0098a1;
+      --iqos-teal: #00a0a0;
       --iqos-light: #f4f7fb;
-      --iqos-gray: #e0e4eb;
+      --iqos-gray: #d7dde5;
     }
 
     body {
@@ -25,7 +25,7 @@
       background: white;
       padding: 30px 25px;
       border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
@@ -42,7 +42,8 @@
       display: block;
     }
 
-    select, input {
+    select,
+    input {
       width: 100%;
       padding: 12px;
       margin-top: 5px;
@@ -54,10 +55,11 @@
       transition: all 0.2s ease;
     }
 
-    select:focus, input:focus {
+    select:focus,
+    input:focus {
       border-color: var(--iqos-teal);
       outline: none;
-      box-shadow: 0 0 5px rgba(0,152,161,0.3);
+      box-shadow: 0 0 5px rgba(0, 160, 160, 0.3);
     }
 
     .checkbox {
@@ -101,6 +103,7 @@
     #copyButton {
       background: var(--iqos-blue);
       margin-top: 10px;
+      display: none;
     }
 
     #copyButton:hover {
@@ -175,6 +178,7 @@
     countrySelect.addEventListener("change", () => {
       const country = countrySelect.value;
       agencySelect.innerHTML = '<option value="">-- Select Agency --</option>';
+
       if (country === "ma") {
         agencySelect.innerHTML += '<option value="PMIMA">PMIMA</option>';
       } else if (country === "tn") {
@@ -182,7 +186,7 @@
       }
     });
 
-    // Auto uppercase + remove spaces
+    // Auto uppercase & remove spaces for campaign
     campaignInput.addEventListener("input", () => {
       campaignInput.value = campaignInput.value.toUpperCase().replace(/\s+/g, "");
     });
@@ -200,16 +204,20 @@
         return;
       }
 
+      // Start base link
       let url = "https://iqostest.com/new/";
       url += ageGate ? "?sag=0" : "?";
 
+      // Compute source value
       let finalSource = source;
       if (campaign && campaign.length >= 2) {
-        finalSource = `${source}-${campaign.slice(0,2)}`;
+        finalSource = `${source}-${campaign.slice(0, 2)}`;
       }
 
+      // Build main parameters
       url += `&country=${country}&agence=${agency}&source=${finalSource}&type=${type}`;
 
+      // Add UTM if campaign present
       if (campaign) {
         url += `&utm_source=${finalSource}&utm_campaign=${campaign}`;
       }
