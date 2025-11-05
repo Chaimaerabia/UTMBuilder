@@ -203,7 +203,10 @@
         alert("Please fill in all required fields.");
         return;
       }
-
+      // Replace SOCIAL with SMM
+      if (source === "SOCIAL") {
+        source = "SMM";
+      }
       // Start base link
       let url = "https://iqostest.com/new/";
       url += ageGate ? "?sag=0" : "?";
