@@ -3,99 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>URL Generator</title>
+  <title>IQOS Link Generator</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 20px;
+    :root {
+      --iqos-blue: #002f6c;
+      --iqos-teal: #0098a1;
+      --iqos-light: #f4f7fb;
+      --iqos-gray: #e0e4eb;
     }
+
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--iqos-light);
+      margin: 0;
+      padding: 40px 15px;
+    }
+
     .container {
       max-width: 600px;
       margin: auto;
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
-    h1 { text-align: center; color: #333; }
-    label, select, input, button {
+
+    h1 {
+      text-align: center;
+      color: var(--iqos-blue);
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--iqos-blue);
+      margin-top: 12px;
       display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid #ccc;
     }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid var(--iqos-gray);
+      border-radius: 10px;
+      background-color: #fff;
+      color: #333;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--iqos-teal);
+      outline: none;
+      box-shadow: 0 0 5px rgba(0,152,161,0.3);
+    }
+
+    .checkbox {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--iqos-blue);
+    }
+
     button {
-      background-color: #007bff;
+      width: 100%;
+      margin-top: 20px;
+      background: var(--iqos-teal);
       color: white;
       border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 15px;
+      transition: background 0.3s ease;
     }
-    button:hover { background-color: #0056b3; }
+
+    button:hover {
+      background: var(--iqos-blue);
+    }
+
     #generatedLink {
-      margin-top: 15px;
-      padding: 10px;
-      background: #eef;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      margin-top: 20px;
+      padding: 12px;
+      background: #eef7fb;
+      border: 1px solid var(--iqos-gray);
+      border-radius: 10px;
       word-wrap: break-word;
+      color: var(--iqos-blue);
+      font-weight: 500;
     }
+
     #copyButton {
-      background-color: #28a745;
-      display: none;
+      background: var(--iqos-blue);
+      margin-top: 10px;
+    }
+
+    #copyButton:hover {
+      background: var(--iqos-teal);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Link Generator</h1>
+    <h1>IQOS Link Generator</h1>
 
     <!-- Country -->
-    <label for="country">Choose a country:</label>
+    <label for="country">Country</label>
     <select id="country">
-      <option value="">--Select Country--</option>
+      <option value="">-- Select Country --</option>
       <option value="ma">Morocco</option>
       <option value="tn">Tunisia</option>
     </select>
 
     <!-- Agency -->
-    <label for="agency">Choose an agency:</label>
+    <label for="agency">Agency</label>
     <select id="agency">
-      <option value="">--Select Agency--</option>
+      <option value="">-- Select Agency --</option>
       <option value="PMIMA">PMIMA</option>
     </select>
 
     <!-- Type -->
-    <label for="type">Select Type (ACH / GTR):</label>
+    <label for="type">Type</label>
     <select id="type">
-      <option value="">--Select Type--</option>
+      <option value="">-- Select Type --</option>
       <option value="ach">ACH</option>
       <option value="gtr">GTR</option>
     </select>
 
     <!-- Source -->
-    <label for="source">Enter Source (CAPS):</label>
-    <input id="source" type="text" placeholder="SOURCE (e.g. SOCIAL, WEB, CRM)" />
+    <label for="source">Source</label>
+    <select id="source">
+      <option value="">-- Select Source --</option>
+      <option value="CRM">CRM</option>
+      <option value="WEB">WEB</option>
+      <option value="SOCIAL">SOCIAL</option>
+    </select>
 
     <!-- Campaign -->
-    <label for="campaign">Campaign (optional, CAPS, no spaces):</label>
+    <label for="campaign">Campaign (optional, CAPS, no spaces)</label>
     <input id="campaign" type="text" placeholder="CAMPAIGN (optional)" />
 
     <!-- Age Gate -->
-    <label>
-      <input type="checkbox" id="ageGate" /> Include Age Gate (?sag=0)
-    </label>
+    <div class="checkbox">
+      <input type="checkbox" id="ageGate" />
+      <label for="ageGate">Include Age Gate (?sag=0)</label>
+    </div>
 
     <!-- Generate -->
     <button id="generateBtn">Generate Link</button>
 
     <!-- Result -->
-    <h3>Generated Link:</h3>
+    <h3 style="color: var(--iqos-blue); margin-top: 25px;">Generated Link:</h3>
     <p id="generatedLink"></p>
     <button id="copyButton">Copy Link</button>
   </div>
@@ -103,7 +166,6 @@
   <script>
     const countrySelect = document.getElementById("country");
     const agencySelect = document.getElementById("agency");
-    const sourceInput = document.getElementById("source");
     const campaignInput = document.getElementById("campaign");
     const generateBtn = document.getElementById("generateBtn");
     const generatedLink = document.getElementById("generatedLink");
@@ -112,8 +174,7 @@
     // Update agencies dynamically based on country
     countrySelect.addEventListener("change", () => {
       const country = countrySelect.value;
-      agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
-
+      agencySelect.innerHTML = '<option value="">-- Select Agency --</option>';
       if (country === "ma") {
         agencySelect.innerHTML += '<option value="PMIMA">PMIMA</option>';
       } else if (country === "tn") {
@@ -121,20 +182,16 @@
       }
     });
 
-    // Force uppercase and remove spaces dynamically
-    function enforceUppercaseNoSpaces(input) {
-      input.addEventListener("input", () => {
-        input.value = input.value.toUpperCase().replace(/\s+/g, "");
-      });
-    }
-    enforceUppercaseNoSpaces(sourceInput);
-    enforceUppercaseNoSpaces(campaignInput);
+    // Auto uppercase + remove spaces
+    campaignInput.addEventListener("input", () => {
+      campaignInput.value = campaignInput.value.toUpperCase().replace(/\s+/g, "");
+    });
 
     generateBtn.addEventListener("click", () => {
       const country = countrySelect.value;
       const agency = agencySelect.value;
       const type = document.getElementById("type").value;
-      const source = sourceInput.value.trim().toUpperCase().replace(/\s+/g, "");
+      const source = document.getElementById("source").value;
       const campaign = campaignInput.value.trim().toUpperCase().replace(/\s+/g, "");
       const ageGate = document.getElementById("ageGate").checked;
 
@@ -143,18 +200,18 @@
         return;
       }
 
-      // Base URL
       let url = "https://iqostest.com/new/";
-
-      // Add ?sag=0 if Age Gate is selected, else start with ?
       url += ageGate ? "?sag=0" : "?";
 
-      // Add main params
-      url += `&country=${country}&agence=${agency}&source=${source}&type=${type}`;
+      let finalSource = source;
+      if (campaign && campaign.length >= 2) {
+        finalSource = `${source}-${campaign.slice(0,2)}`;
+      }
 
-      // Add campaign if present
+      url += `&country=${country}&agence=${agency}&source=${finalSource}&type=${type}`;
+
       if (campaign) {
-        url += `&utm_source=${source}&utm_campaign=${campaign}`;
+        url += `&utm_source=${finalSource}&utm_campaign=${campaign}`;
       }
 
       generatedLink.textContent = url;
@@ -163,7 +220,7 @@
 
     copyButton.addEventListener("click", () => {
       navigator.clipboard.writeText(generatedLink.textContent);
-      alert("Link copied to clipboard!");
+      alert("✅ Link copied to clipboard!");
     });
   </script>
 </body>
