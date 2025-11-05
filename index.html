@@ -1,76 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>URL Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
       margin: 0;
       padding: 20px;
-      background-color: #f4f4f9;
     }
     .container {
       max-width: 600px;
       margin: auto;
+      background: white;
       padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    label, select, button, input {
+    h1 { text-align: center; color: #333; }
+    label, select, input, button {
       display: block;
       width: 100%;
-      margin: 10px 0;
-      font-size: 1.1em;
+      margin-top: 10px;
       padding: 10px;
-      border-radius: 5px;
+      font-size: 1em;
+      border-radius: 6px;
       border: 1px solid #ccc;
     }
-    label {
-      font-weight: bold;
-    }
-    select, button, input {
-      background-color: #f9f9f9;
-      color: #333;
-    }
     button {
-      background-color: #007BFF;
-      color: #fff;
-      cursor: pointer;
+      background-color: #007bff;
+      color: white;
       border: none;
-      transition: background-color 0.3s ease;
+      cursor: pointer;
+      margin-top: 15px;
     }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #testCheckboxContainer {
-      display: none;
-      margin-top: 20px;
-      background-color: #ffebeb;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    #testCheckbox {
-      margin-right: 10px;
-      accent-color: red;
-    }
+    button:hover { background-color: #0056b3; }
     #generatedLink {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 10px;
-      background-color: #eef;
+      background: #eef;
       border: 1px solid #ddd;
-      border-radius: 5px;
+      border-radius: 6px;
       word-wrap: break-word;
     }
     #copyButton {
-      margin-top: 10px;
       background-color: #28a745;
+      display: none;
     }
   </style>
 </head>
@@ -78,238 +55,81 @@
   <div class="container">
     <h1>Link Generator</h1>
 
-    <!-- Country Selection -->
+    <!-- Country -->
     <label for="country">Choose a country:</label>
     <select id="country">
       <option value="">--Select Country--</option>
-      <option value="morocco">Morocco</option>
-      <option value="tunisia">Tunisia</option>
+      <option value="ma">Morocco</option>
+      <option value="tn">Tunisia</option>
     </select>
 
-    <!-- Purpose Selection -->
-    <label for="purpose">Choose the purpose of your link:</label>
-    <select id="purpose" disabled>
-      <option value="">--Select Purpose--</option>
-      <option value="url">URL</option>
-      <option value="schedule">SCHEDULE</option>
-    </select>
-
-    <!-- Agency Selection -->
+    <!-- Agency -->
     <label for="agency">Choose an agency:</label>
-    <select id="agency" style="display:none;">
+    <select id="agency">
       <option value="">--Select Agency--</option>
+      <option value="PMIMA">PMIMA</option>
+      <option value="PMITN">PMITN</option>
     </select>
 
-    <!-- Lead Source Selection -->
-    <label for="leadSource" style="display:none;">Choose a lead source:</label>
-    <select id="leadSource" style="display:none;">
-      <option value="">--Select Lead Source--</option>
+    <!-- Type -->
+    <label for="type">Select Type (ACH / GTR):</label>
+    <select id="type">
+      <option value="">--Select Type--</option>
+      <option value="ach">ACH</option>
+      <option value="gtr">GTR</option>
     </select>
 
-    <!-- Manual Source Input -->
-    <label id="manualSourceLabel" style="display:none;" for="manualSource">Manual Source (in CAPITAL letters):</label>
-    <input id="manualSource" type="text" style="display:none;" placeholder="Enter source in CAPITAL letters">
+    <!-- Source -->
+    <label for="source">Enter Source (CAPS):</label>
+    <input id="source" type="text" placeholder="SOURCE (e.g. SOCIAL, WEB, CRM)" />
 
-    <!-- Test Checkbox -->
-    <label id="testCheckboxContainer" style="display:none;">
-      <input type="checkbox" id="testCheckbox"> TEST (check this box if you wish to use the link for testing purposes only)
-    </label>
+    <!-- Campaign -->
+    <label for="campaign">Campaign (optional, CAPS):</label>
+    <input id="campaign" type="text" placeholder="CAMPAIGN (optional)" />
 
-    <!-- Generate Button -->
-    <button id="generateBtn" style="display:none;">Generate your link</button>
+    <!-- Generate -->
+    <button id="generateBtn">Generate Link</button>
 
-    <!-- Output -->
+    <!-- Result -->
     <h3>Generated Link:</h3>
     <p id="generatedLink"></p>
-    
-    <!-- Copy Button -->
-    <button id="copyButton" style="display:none;">Copy Link</button>
+    <button id="copyButton">Copy Link</button>
   </div>
 
   <script>
-    // Table Data
-    const tableData = {
-      url: {
-        PMIMA: {
-          CRM: { utm_source: "crm", utm_campaign: "" },
-          "CRM-AOKI": { utm_source: "crm", utm_campaign: "aoki" },
-          SMM: { utm_source: "social", utm_campaign: "" },
-          "SMM-AOKI": { utm_source: "social", utm_campaign: "aoki" },
-          SMMBIO: { utm_source: "social", utm_campaign: "" },
-          SMMHIGH: { utm_source: "social", utm_campaign: "" },
-          WEB: { utm_source: "web", utm_campaign: "" },
-          "WEB-AOKI": { utm_source: "web", utm_campaign: "aoki" },
-        },
-        GLOVO: {
-          COIN: { utm_source: "glovo", utm_campaign: "coin_mechanic" },
-        },
-        cpl_agency6: {
-          MANUAL: { utm_source: "manual", utm_campaign: "manual" },
-        },
-        cpl_agency5: {
-          MANUAL: { utm_source: "manual", utm_campaign: "manual" },
-        },
-      },
-      schedule: {
-        PMITN: {
-          CSC: {},
-        },
-        GLOVO: {
-          ORGANIC: {},
-        },
-        PMIMA: {
-          CSC: {},
-        },
-      },
-    };
-
-    // Base URLs
-    const baseUrls = {
-      morocco: {
-        url: "https://iqostest.com",
-        schedule: "https://iqostest.com/schedule",
-      },
-      tunisia: {
-        url: "https://iqostest.com/tn",
-        schedule: "https://iqostest.com/schedule",
-      },
-    };
-
-    // DOM Elements
-    const countrySelect = document.getElementById("country");
-    const purposeSelect = document.getElementById("purpose");
-    const agencySelect = document.getElementById("agency");
-    const leadSourceSelect = document.getElementById("leadSource");
-    const manualSourceInput = document.getElementById("manualSource");
-    const manualSourceLabel = document.getElementById("manualSourceLabel");
-    const testCheckbox = document.getElementById("testCheckbox");
-    const testCheckboxContainer = document.getElementById("testCheckboxContainer");
     const generateBtn = document.getElementById("generateBtn");
-    const generatedLink = document.getElementById("generatedLink");
     const copyButton = document.getElementById("copyButton");
+    const generatedLink = document.getElementById("generatedLink");
 
-    // Country Selection Event
-    countrySelect.addEventListener("change", () => {
-      const country = countrySelect.value;
-      if (country) {
-        purposeSelect.disabled = false;
-      } else {
-        purposeSelect.disabled = true;
-      }
-
-      agencySelect.style.display = "none";
-      leadSourceSelect.style.display = "none";
-      manualSourceLabel.style.display = "none";
-      manualSourceInput.style.display = "none";
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
-    });
-
-    // Update Agency List
-    purposeSelect.addEventListener("change", () => {
-      const purpose = purposeSelect.value;
-      agencySelect.style.display = purpose ? "block" : "none";
-      agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
-
-      if (purpose) {
-        const country = countrySelect.value;
-        let agencies = [];
-
-        if (country === "tunisia") {
-          if (purpose === "url") {
-            agencies = ["PMITN", "GLOVO", "cpl_agency5"];
-          } else if (purpose === "schedule") {
-            agencies = ["cpl_agency5", "PMITN"];
-          }
-        } else if (country === "morocco") {
-          if (purpose === "url") {
-            agencies = ["PMIMA", "GLOVO", "cpl_agency6"];
-          } else if (purpose === "schedule") {
-            agencies = ["cpl_agency6", "PMIMA"];
-          }
-        }
-
-        agencies.forEach(agency => {
-          const option = document.createElement("option");
-          option.value = agency;
-          option.textContent = agency;
-          agencySelect.appendChild(option);
-        });
-      }
-
-      leadSourceSelect.style.display = "none";
-      manualSourceLabel.style.display = "none";
-      manualSourceInput.style.display = "none";
-      testCheckboxContainer.style.display = "none";
-      generateBtn.style.display = "none";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
-    });
-
-    // Update Lead Source List
-    agencySelect.addEventListener("change", () => {
-      const agency = agencySelect.value;
-      leadSourceSelect.style.display = agency ? "block" : "none";
-      leadSourceSelect.innerHTML = '<option value="">--Select Lead Source--</option>';
-
-      if (agency && agency !== "cpl_agency6" && agency !== "cpl_agency5") {
-        const purpose = purposeSelect.value;
-        const leadSources = Object.keys(tableData[purpose][agency]);
-        leadSources.forEach(source => {
-          const option = document.createElement("option");
-          option.value = source;
-          option.textContent = source;
-          leadSourceSelect.appendChild(option);
-        });
-      }
-
-      if (agency === "cpl_agency6" || agency === "cpl_agency5") {
-        manualSourceLabel.style.display = "block";
-        manualSourceInput.style.display = "block";
-        leadSourceSelect.style.display = "none";
-      }
-
-      testCheckboxContainer.style.display = "block";
-      generateBtn.style.display = "block";
-      generatedLink.textContent = "";
-      copyButton.style.display = "none";
-    });
-
-    // Generate URL
     generateBtn.addEventListener("click", () => {
-      const country = countrySelect.value;
-      const purpose = purposeSelect.value;
-      const agency = agencySelect.value;
-      const isTest = testCheckbox.checked;
-      const manualSource = manualSourceInput.value.trim().toUpperCase(); // Manual Source
+      const country = document.getElementById("country").value;
+      const agency = document.getElementById("agency").value;
+      const type = document.getElementById("type").value;
+      const source = document.getElementById("source").value.trim().toUpperCase();
+      const campaign = document.getElementById("campaign").value.trim().toUpperCase();
 
-      const baseUrl = baseUrls[country][purpose];
-      let url = `${baseUrl}/?agence=${agency}`;
-
-      // If a manual source is provided, use that
-      if (manualSource) {
-        url += `&source=${manualSource}&utm_source=${manualSource}&utm_campaign=${manualSource}`;
-      } else {
-        // Otherwise, fetch from predefined table data
-        const source = leadSourceSelect.value;
-        url += `&source=${source}&utm_source=${source}&utm_campaign=${source}`;
+      if (!country || !agency || !type || !source) {
+        alert("Please fill in all required fields.");
+        return;
       }
 
-      if (isTest) {
-        url += "&test=true";
+      let url = `https://iqostest.com/new/?agence=${agency}&source=${source}&country=${country}`;
+
+      // Add type
+      url += `&type=${type}`;
+
+      // Add campaign if filled
+      if (campaign) {
+        url += `&utm_source=${source}&utm_campaign=${campaign}`;
       }
 
       generatedLink.textContent = url;
       copyButton.style.display = "inline-block";
     });
 
-    // Copy URL to Clipboard
     copyButton.addEventListener("click", () => {
-      navigator.clipboard.writeText(generatedLink.textContent).then(() => {
-        alert("Link copied to clipboard!");
-      });
+      navigator.clipboard.writeText(generatedLink.textContent);
+      alert("Link copied to clipboard!");
     });
   </script>
 </body>
