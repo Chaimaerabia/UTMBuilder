@@ -68,7 +68,6 @@
     <select id="agency">
       <option value="">--Select Agency--</option>
       <option value="PMIMA">PMIMA</option>
-      <option value="PMITN">PMITN</option>
     </select>
 
     <!-- Type -->
@@ -84,8 +83,13 @@
     <input id="source" type="text" placeholder="SOURCE (e.g. SOCIAL, WEB, CRM)" />
 
     <!-- Campaign -->
-    <label for="campaign">Campaign (optional, CAPS):</label>
+    <label for="campaign">Campaign (optional, CAPS, no spaces):</label>
     <input id="campaign" type="text" placeholder="CAMPAIGN (optional)" />
+
+    <!-- Age Gate -->
+    <label>
+      <input type="checkbox" id="ageGate" /> Include Age Gate (?sag=0)
+    </label>
 
     <!-- Generate -->
     <button id="generateBtn">Generate Link</button>
@@ -97,28 +101,58 @@
   </div>
 
   <script>
+    const countrySelect = document.getElementById("country");
+    const agencySelect = document.getElementById("agency");
+    const sourceInput = document.getElementById("source");
+    const campaignInput = document.getElementById("campaign");
     const generateBtn = document.getElementById("generateBtn");
-    const copyButton = document.getElementById("copyButton");
     const generatedLink = document.getElementById("generatedLink");
+    const copyButton = document.getElementById("copyButton");
+
+    // Update agencies dynamically based on country
+    countrySelect.addEventListener("change", () => {
+      const country = countrySelect.value;
+      agencySelect.innerHTML = '<option value="">--Select Agency--</option>';
+
+      if (country === "ma") {
+        agencySelect.innerHTML += '<option value="PMIMA">PMIMA</option>';
+      } else if (country === "tn") {
+        agencySelect.innerHTML += '<option value="PMITN">PMITN</option>';
+      }
+    });
+
+    // Force uppercase and remove spaces dynamically
+    function enforceUppercaseNoSpaces(input) {
+      input.addEventListener("input", () => {
+        input.value = input.value.toUpperCase().replace(/\s+/g, "");
+      });
+    }
+    enforceUppercaseNoSpaces(sourceInput);
+    enforceUppercaseNoSpaces(campaignInput);
 
     generateBtn.addEventListener("click", () => {
-      const country = document.getElementById("country").value;
-      const agency = document.getElementById("agency").value;
+      const country = countrySelect.value;
+      const agency = agencySelect.value;
       const type = document.getElementById("type").value;
-      const source = document.getElementById("source").value.trim().toUpperCase();
-      const campaign = document.getElementById("campaign").value.trim().toUpperCase();
+      const source = sourceInput.value.trim().toUpperCase().replace(/\s+/g, "");
+      const campaign = campaignInput.value.trim().toUpperCase().replace(/\s+/g, "");
+      const ageGate = document.getElementById("ageGate").checked;
 
       if (!country || !agency || !type || !source) {
         alert("Please fill in all required fields.");
         return;
       }
 
-      let url = `https://iqostest.com/new/?agence=${agency}&source=${source}&country=${country}`;
+      // Base URL
+      let url = "https://iqostest.com/new/";
 
-      // Add type
-      url += `&type=${type}`;
+      // Add ?sag=0 if Age Gate is selected, else start with ?
+      url += ageGate ? "?sag=0" : "?";
 
-      // Add campaign if filled
+      // Add main params
+      url += `&country=${country}&agence=${agency}&source=${source}&type=${type}`;
+
+      // Add campaign if present
       if (campaign) {
         url += `&utm_source=${source}&utm_campaign=${campaign}`;
       }
